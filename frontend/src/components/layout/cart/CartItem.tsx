@@ -14,7 +14,7 @@ const CartItem: React.FC<CartItemProps> = ({ item, onClick }) => {
       onClick={() => onClick(item)}
       sx={{
         "&:hover": {
-          backgroundColor: theme.palette.secondary.main, // Lighter shade for hover
+          backgroundColor: theme.palette.primary.main, // Lighter shade for hover
         },
       }}
     >

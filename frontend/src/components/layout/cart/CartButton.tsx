@@ -46,7 +46,7 @@ const CartButton: React.FC<CartButtonProps> = ({ items, onItemClick }) => {
         onClose={toggleDrawer(false)}
         sx={{
           "& .MuiDrawer-paper": {
-            backgroundColor: theme.palette.primary.main,
+            backgroundColor: theme.palette.secondary.main,
             color: theme.palette.text.primary,
           },
         }}

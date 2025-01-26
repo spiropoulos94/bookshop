@@ -21,7 +21,7 @@ const CartDrawerContent: React.FC<CartDrawerContentProps> = ({
     <List
       sx={{
         width: 250,
-        backgroundColor: theme.palette.primary.main,
+        backgroundColor: theme.palette.secondary.main,
         color: theme.palette.text.primary,
       }}
     >
