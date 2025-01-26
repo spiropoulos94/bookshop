@@ -64,7 +64,8 @@ func (c *Container) InitRepositories() {
 func (c *Container) InitServices() {
 
 	c.Services = &services.Services{
-		BooksService: services.NewBooksService(*c.Repositories.Google),
+		BooksService:    services.NewBooksService(c.Repositories.Google),
+		FrontendService: services.NewFrontendService(&c.EnvConfig.FrontendConfig),
 	}
 }
 

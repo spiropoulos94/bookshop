@@ -12,6 +12,7 @@ import (
 // Config holds application configuration
 type Config struct {
 	ServerConfig
+	FrontendConfig
 	GoogleBooksConfig
 }
 
@@ -29,6 +30,9 @@ func Load() Config {
 			WriteTimeout:  getEnvAsDuration("WRITE_TIMEOUT", 120*time.Second),
 			ReadTimeout:   getEnvAsDuration("READ_TIMEOUT", 15*time.Second),
 			IdleTimeout:   getEnvAsDuration("IDLE_TIMEOUT", 60*time.Second),
+		},
+		FrontendConfig: FrontendConfig{
+			FrontendDir: getEnv("FRONTEND_DIR", "frontend/dist"),
 		},
 		GoogleBooksConfig: GoogleBooksConfig{
 			APIKey:  getEnv("GOOGLE_BOOKS_API_KEY", ""),

@@ -3,10 +3,10 @@ package services
 import "spiropoulos04/bookshop/backend/internal/repositories"
 
 type BooksService struct {
-	GoogleBooksRepository repositories.GoogleBooksRepository
+	GoogleBooksRepository *repositories.GoogleBooksRepository
 }
 
-func NewBooksService(googleBooksRepository repositories.GoogleBooksRepository) *BooksService {
+func NewBooksService(googleBooksRepository *repositories.GoogleBooksRepository) *BooksService {
 	return &BooksService{
 		GoogleBooksRepository: googleBooksRepository,
 	}

@@ -1,5 +1,6 @@
 package services
 
 type Services struct {
-	BooksService *BooksService
+	FrontendService *FrontendService
+	BooksService    *BooksService
 }

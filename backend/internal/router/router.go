@@ -19,6 +19,10 @@ func Build(c *container.Container) {
 	router.GET("/health", handlers.HealthHandler(c))
 
 	// Static files
+	router.GET("/", handlers.FrontendHandler(c))
+
+	// Or use a catch-all if no other routes match, but after specific ones
+	router.NoRoute(handlers.FrontendHandler(c)) // This serves as a catch-all
 
 	c.Server.Handler = router
 }
