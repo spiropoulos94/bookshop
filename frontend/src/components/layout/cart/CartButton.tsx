@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Badge, IconButton, Drawer } from "@mui/material";
+import { Badge, IconButton, Drawer, useTheme } from "@mui/material";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import CartDrawerContent from "./CartDrawerContent";
 
@@ -10,6 +10,7 @@ interface CartButtonProps {
 
 const CartButton: React.FC<CartButtonProps> = ({ items, onItemClick }) => {
   const [drawerOpen, setDrawerOpen] = useState(false);
+  const theme = useTheme(); // Get theme from context
 
   const toggleDrawer = (open: boolean) => () => {
     setDrawerOpen(open);
@@ -45,8 +46,8 @@ const CartButton: React.FC<CartButtonProps> = ({ items, onItemClick }) => {
         onClose={toggleDrawer(false)}
         sx={{
           "& .MuiDrawer-paper": {
-            backgroundColor: "#333",
-            color: "white",
+            backgroundColor: theme.palette.primary.main,
+            color: theme.palette.text.primary,
           },
         }}
       >
