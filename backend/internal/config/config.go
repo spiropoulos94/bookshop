@@ -32,7 +32,7 @@ func Load() Config {
 			IdleTimeout:   getEnvAsDuration("IDLE_TIMEOUT", 60*time.Second),
 		},
 		FrontendConfig: FrontendConfig{
-			FrontendDir: getEnv("FRONTEND_DIR", "frontend/dist"),
+			FrontendDir: getEnv("FRONTEND_DIR", "./../frontend/dist"),
 		},
 		GoogleBooksConfig: GoogleBooksConfig{
 			APIKey:  getEnv("GOOGLE_BOOKS_API_KEY", ""),
