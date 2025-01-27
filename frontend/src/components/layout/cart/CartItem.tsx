@@ -13,12 +13,23 @@ const CartItem: React.FC<CartItemProps> = ({ item, onClick }) => {
     <MenuItem
       onClick={() => onClick(item)}
       sx={{
+        color: theme.palette.primary.main,
+        mb: 2,
         "&:hover": {
-          backgroundColor: theme.palette.primary.main, // Lighter shade for hover
+          opacity: 0.9,
+          "& .MuiTypography-root": {
+            textDecoration: "underline", // Apply underline on Typography on MenuItem hover
+          },
         },
       }}
     >
-      <Typography variant="body2" color={theme.palette.text.primary}>
+      <Typography
+        variant="body2"
+        color={theme.palette.primary.main}
+        sx={{
+          transition: "text-decoration 0.3s", // Smooth transition for the underline
+        }}
+      >
         {item.name} - ${item.price.toFixed(2)}
       </Typography>
     </MenuItem>

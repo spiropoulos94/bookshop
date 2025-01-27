@@ -21,15 +21,20 @@ const CartDrawerContent: React.FC<CartDrawerContentProps> = ({
     <List
       sx={{
         width: 250,
-        backgroundColor: theme.palette.secondary.main,
-        color: theme.palette.text.primary,
+        backgroundColor: theme.palette.background.default,
+        color: theme.palette.primary.main,
       }}
     >
       {/* Header for Total Price */}
       <Typography variant="h6" sx={{ padding: 2 }}>
         Total: ${totalPrice.toFixed(2)}
       </Typography>
-      <Divider sx={{ backgroundColor: theme.palette.secondary.main }} />
+      <Divider
+        sx={{
+          backgroundColor: theme.palette.primary.main,
+          mb: 1,
+        }}
+      />
 
       {items.length > 0 ? (
         items.map((item) => (
