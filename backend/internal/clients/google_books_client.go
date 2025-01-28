@@ -21,7 +21,7 @@ func NewGoogleBooksClient(baseUrl string) *GoogleBooksClient {
 }
 
 // GetBookList fetches a list of books based on search terms
-func (gbc *GoogleBooksClient) GetBookList(pageSize int, startIndex int) ([]models.Book, error) {
+func (gbc *GoogleBooksClient) GetBookList(pageSize int, startIndex int) (*models.GoogleBooksAPIClientResponse, error) {
 	fmt.Println("GoogleBooksClient GetBookList pageSize: ", pageSize, ", startIndex: ", startIndex)
 
 	// Construct the API endpoint with the search terms, pageSize, and startIndex
@@ -84,5 +84,8 @@ func (gbc *GoogleBooksClient) GetBookList(pageSize int, startIndex int) ([]model
 		books = append(books, book)
 	}
 
-	return books, nil
+	return &models.GoogleBooksAPIClientResponse{
+		TotalItems: booksResponse.TotalItems,
+		Books:      books,
+	}, nil
 }

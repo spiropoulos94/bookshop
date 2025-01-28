@@ -36,3 +36,8 @@ type BooksResponse struct {
 	TotalItems int      `json:"totalItems"`
 	Items      []Volume `json:"items"`
 }
+
+type GoogleBooksAPIClientResponse struct {
+	TotalItems int    `json:"totalItems"`
+	Books      []Book `json:"items"`
+}
