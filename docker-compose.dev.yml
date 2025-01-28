@@ -13,7 +13,9 @@ services:
       redis:  
         condition: service_started
     networks:
-      - my_network  
+      - my_network
+    environment:
+      - ENVIRONMENT=development   
 
   redis:
     image: redis:7.0-alpine  
@@ -35,6 +37,11 @@ services:
     networks:
       - my_network  
     command: npm run dev  # Start the frontend in development mode
+    depends_on:
+      app:  
+        condition: service_started
+    environment:
+      - MODE=development
 
 networks:
   my_network:

@@ -33,6 +33,7 @@ func Load() Config {
 			WriteTimeout:  getEnvAsDuration("WRITE_TIMEOUT", 120*time.Second),
 			ReadTimeout:   getEnvAsDuration("READ_TIMEOUT", 15*time.Second),
 			IdleTimeout:   getEnvAsDuration("IDLE_TIMEOUT", 60*time.Second),
+			Environment:   getEnv("ENVIRONMENT", "development"),
 		},
 		FrontendConfig: FrontendConfig{
 			FrontendDir: getEnv("FRONTEND_DIRECTORY", "./frontend"),

@@ -11,7 +11,9 @@ services:
       redis:  
         condition: service_started
     networks:
-      - my_network  
+      - my_network
+    environment:
+      - ENVIRONMENT=production  
 
   redis:
     image: redis:7.0-alpine  

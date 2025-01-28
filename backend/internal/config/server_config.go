@@ -9,4 +9,6 @@ type ServerConfig struct {
 	WriteTimeout  time.Duration
 	ReadTimeout   time.Duration
 	IdleTimeout   time.Duration
+
+	Environment string
 }
