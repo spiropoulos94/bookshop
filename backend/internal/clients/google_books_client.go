@@ -63,13 +63,14 @@ func (gbc *GoogleBooksClient) GetBookList(pageSize int, startIndex int) ([]model
 			PageCount:      volume.VolumeInfo.PageCount,
 			MaturityRating: volume.VolumeInfo.MaturityRating,
 			Thumbnail:      volume.VolumeInfo.ImageLinks.Thumbnail,
-			ISBNs: func() []string {
-				var isbns []string
-				for _, id := range volume.VolumeInfo.IndustryIdentifiers {
-					isbns = append(isbns, id.Identifier)
-				}
-				return isbns
-			}(),
+		}
+
+		// Extract only the ISBN_13
+		for _, id := range volume.VolumeInfo.IndustryIdentifiers {
+			if id.Type == "ISBN_13" {
+				book.ISBN = id.Identifier // Save only the ISBN_13
+				break                     // Exit the loop once we found ISBN_13
+			}
 		}
 
 		// Ensure price is always included

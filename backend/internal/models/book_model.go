@@ -2,14 +2,14 @@ package models
 
 // Struct to represent parts of the API response
 type Book struct {
-	Title          string   `json:"title"`
-	Description    string   `json:"description"`
-	PageCount      int      `json:"pageCount"`
-	Price          float64  `json:"price"` // Price will always be included
-	MaturityRating string   `json:"maturityRating"`
-	Thumbnail      string   `json:"thumbnail"`       // Mapping thumbnail directly for ease
-	ISBNs          []string `json:"isbns,omitempty"` // Collect all ISBNs into a slice
-	RevisionNumber int      `json:"revision,omitempty"`
+	Title          string  `json:"title"`
+	Description    string  `json:"description"`
+	PageCount      int     `json:"pageCount"`
+	Price          float64 `json:"price"` // Price will always be included
+	MaturityRating string  `json:"maturityRating"`
+	Thumbnail      string  `json:"thumbnail"`      // Mapping thumbnail directly for ease
+	ISBN           string  `json:"isbn,omitempty"` // Changed from slice to single ISBN
+	RevisionNumber int     `json:"revision,omitempty"`
 }
 
 type Volume struct {
