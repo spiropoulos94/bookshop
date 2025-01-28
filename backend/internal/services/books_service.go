@@ -19,19 +19,22 @@ func NewBooksService(googleBooksRepository *repositories.GoogleBooksRepository, 
 	}
 }
 
-func (bs *BooksService) GetBookList(pageSize int, startIndex int) ([]models.Book, error) {
-	// Fetch the list of books
-	books, err := bs.GoogleBooksRepository.Client.GetBookList(pageSize, startIndex)
+func (bs *BooksService) GetBookList(pageSize int, startIndex int) (*models.APIResponse, error) {
+	// Fetch the list of books from the Google Books API
+	booksResponse, err := bs.GoogleBooksRepository.Client.GetBookList(pageSize, startIndex)
 	if err != nil {
 		return nil, err // Handle error from GoogleBooksClient
 	}
+
+	// Calculate total pages
+	totalPages := (booksResponse.TotalItems + pageSize - 1) / pageSize // Ceiling division
 
 	// Create a new slice to hold books with revision numbers
 	var updatedBooks []models.Book
 	var mu sync.Mutex // Mutex to safely append to the slice
 	var wg sync.WaitGroup
 
-	for _, book := range books {
+	for _, book := range booksResponse.Books {
 		wg.Add(1) // Increment the wait group counter
 		go func(b models.Book) {
 			defer wg.Done() // Decrement the counter when the goroutine completes
@@ -43,7 +46,6 @@ func (bs *BooksService) GetBookList(pageSize int, startIndex int) ([]models.Book
 				if err != nil {
 					// Log the error
 					fmt.Printf("Error fetching revision number for ISBN %s: %v\n", b.ISBN, err)
-					// No need to set the revision number in case of an error
 				} else {
 					// Set the revision number for the book if successfully fetched
 					b.RevisionNumber = revisionNumber
@@ -59,5 +61,11 @@ func (bs *BooksService) GetBookList(pageSize int, startIndex int) ([]models.Book
 
 	wg.Wait() // Wait for all goroutines to finish
 
-	return updatedBooks, nil
+	// Create the response object with pagination information
+	return &models.APIResponse{
+		TotalPages:  totalPages,
+		CurrentPage: (startIndex / pageSize) + 1, // Calculate current page (1-based index)
+		PageSize:    pageSize,
+		Books:       updatedBooks,
+	}, nil
 }

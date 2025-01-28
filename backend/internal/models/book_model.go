@@ -41,3 +41,11 @@ type GoogleBooksAPIClientResponse struct {
 	TotalItems int    `json:"totalItems"`
 	Books      []Book `json:"items"`
 }
+
+// APIResponse represents the structure of the API response sent to users.
+type APIResponse struct {
+	TotalPages  int    `json:"totalPages"`
+	CurrentPage int    `json:"currentPage"`
+	PageSize    int    `json:"pageSize"`
+	Books       []Book `json:"books"`
+}
