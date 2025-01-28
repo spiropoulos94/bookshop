@@ -24,11 +24,12 @@ export interface GetBooksResponse {
 
 export const GetBooks = async (
   pageSize: number = 10,
-  page: number = 1
+  page: number = 1,
+  searchTerm: string = "nosql"
 ): Promise<GetBooksResponse> => {
   try {
     const response = await fetch(
-      `${BACKEND_API_URL}/api/books?pageSize=${pageSize}&page=${page}`
+      `${BACKEND_API_URL}/api/books?searc=${searchTerm}&pageSize=${pageSize}&page=${page}`
     ); // Mock API URL
     if (!response.ok) {
       const errorData = await response.json(); // Extract the error details from the response
