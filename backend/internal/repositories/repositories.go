@@ -3,8 +3,9 @@ package repositories
 import "spiropoulos04/bookshop/backend/internal/config"
 
 type Repositories struct {
-	Google    *GoogleBooksRepository
-	EnvConfig *config.Config
+	Google      *GoogleBooksRepository
+	OpenLibrary *OpenLibraryRepository
+	EnvConfig   *config.Config
 }
 
 // NewRepositories creates and returns an instance of Repositories

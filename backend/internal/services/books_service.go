@@ -7,11 +7,13 @@ import (
 
 type BooksService struct {
 	GoogleBooksRepository *repositories.GoogleBooksRepository
+	OpenLibraryRepository *repositories.OpenLibraryRepository
 }
 
-func NewBooksService(googleBooksRepository *repositories.GoogleBooksRepository) *BooksService {
+func NewBooksService(googleBooksRepository *repositories.GoogleBooksRepository, openLibraryRepository *repositories.OpenLibraryRepository) *BooksService {
 	return &BooksService{
 		GoogleBooksRepository: googleBooksRepository,
+		OpenLibraryRepository: openLibraryRepository,
 	}
 }
 

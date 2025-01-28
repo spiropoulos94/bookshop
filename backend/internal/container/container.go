@@ -56,7 +56,8 @@ func (c *Container) InitServer() {
 
 func (c *Container) InitRepositories() {
 	c.Repositories = &repositories.Repositories{
-		Google: repositories.NewGoogleBooksRepository(&c.EnvConfig.GoogleBooksConfig),
+		Google:      repositories.NewGoogleBooksRepository(&c.EnvConfig.GoogleBooksConfig),
+		OpenLibrary: repositories.NewOpenLibraryRepository(&c.EnvConfig.OpenLibraryConfig),
 	}
 }
 
@@ -64,7 +65,7 @@ func (c *Container) InitRepositories() {
 func (c *Container) InitServices() {
 
 	c.Services = &services.Services{
-		BooksService:    services.NewBooksService(c.Repositories.Google),
+		BooksService:    services.NewBooksService(c.Repositories.Google, c.Repositories.OpenLibrary),
 		FrontendService: services.NewFrontendService(&c.EnvConfig.FrontendConfig),
 	}
 }

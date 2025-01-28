@@ -9,6 +9,7 @@ type Book struct {
 	MaturityRating string   `json:"maturityRating"`
 	Thumbnail      string   `json:"thumbnail"`       // Mapping thumbnail directly for ease
 	ISBNs          []string `json:"isbns,omitempty"` // Collect all ISBNs into a slice
+	RevisionNumber int      `json:"revision,omitempty"`
 }
 
 type Volume struct {
