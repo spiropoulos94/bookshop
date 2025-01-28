@@ -1,0 +1,31 @@
+# Backend Builder
+FROM golang:1.23-alpine AS backend-builder
+
+WORKDIR /app
+
+# Copy Go modules files
+COPY backend/go.mod backend/go.sum ./
+RUN go mod download
+
+# Copy the rest of the backend code
+COPY backend ./
+
+# Build the Go application
+RUN go build -o server ./cmd/main.go
+
+# Final Stage
+FROM golang:1.23-alpine
+
+WORKDIR /app
+
+# Copy backend artifacts from the builder stage
+COPY --from=backend-builder /app/server .
+
+# Copy the .env file (if needed)
+COPY backend/.env .
+
+# Expose the port for the server
+EXPOSE 8080
+
+# Start the application
+CMD ["./server"]
