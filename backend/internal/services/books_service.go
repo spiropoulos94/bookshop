@@ -36,17 +36,19 @@ func (bs *BooksService) GetBookList(pageSize int, startIndex int) ([]models.Book
 			if err != nil {
 				// Log the error (using a logging library or fmt for simplicity)
 				fmt.Printf("Error fetching revision number for ISBN %s: %v\n", book.ISBN, err)
-				// Skip this book if there's an error
-				continue
+				// No need to skip the book, just do not set the revision number
+			} else {
+				// Set the revision number for the book if successfully fetched
+				book.RevisionNumber = revisionNumber
 			}
-
-			// Set the revision number for the book
-			book.RevisionNumber = revisionNumber
 		}
 
-		// Append the updated book to the new slice
+		// Append the updated book to the new slice, regardless of ISBN
 		updatedBooks = append(updatedBooks, book)
 	}
+
+	fmt.Println("Books length: ", len(books))
+	fmt.Println("Updated books length: ", len(updatedBooks))
 
 	return updatedBooks, nil
 }
