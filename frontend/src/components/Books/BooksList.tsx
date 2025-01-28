@@ -17,15 +17,15 @@ const BooksList = ({}: Props) => {
   useEffect(() => {
     const fetchBooks = async () => {
       setLoading(true);
-      const { data, error } = await GetBooks();
+      const { books, error } = await GetBooks();
       if (error) {
         console.error(error);
         setError(error);
         setLoading(false);
         return;
       }
-      console.log({ data });
-      setBooks(data || []);
+      console.log({ books });
+      setBooks(books || []);
       setLoading(false);
     };
     fetchBooks();
