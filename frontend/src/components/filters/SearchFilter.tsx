@@ -4,13 +4,16 @@ import {
   styled,
   TextField,
   IconButton,
+  Button,
+  useMediaQuery,
 } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
-import ClearIcon from "@mui/icons-material/Close"; // Import the Clear icon
+import ClearIcon from "@mui/icons-material/Close";
 import { useState } from "react";
 
 interface SearchFilterProps {
   onSearch: (search: string) => void;
+  defaultValue?: string;
 }
 
 const Searchbar = styled(TextField)(() => ({
@@ -33,8 +36,13 @@ const Searchbar = styled(TextField)(() => ({
   },
 }));
 
-const SearchFilter = ({ onSearch }: SearchFilterProps) => {
-  const [searchValue, setSearchValue] = useState<string>(""); // State for input value
+const SearchFilter = ({ onSearch, defaultValue = "" }: SearchFilterProps) => {
+  const [searchValue, setSearchValue] = useState<string>(defaultValue);
+  const isMobile = useMediaQuery("(max-width:600px)"); // Detect mobile screen size
+
+  const handleSearchClick = () => {
+    onSearch(searchValue); // Trigger the search action
+  };
 
   const handleClear = () => {
     setSearchValue(""); // Clear the input
@@ -47,6 +55,10 @@ const SearchFilter = ({ onSearch }: SearchFilterProps) => {
       pb={"16px"}
       ml={"auto"}
       mb={"20px"}
+      display="flex"
+      flexDirection={isMobile ? "column" : "row"} // Stack on mobile, row on larger screens
+      gap="8px" // Add spacing between elements
+      alignItems="center"
       width={{
         xs: "100%",
         md: "400px",
@@ -54,19 +66,11 @@ const SearchFilter = ({ onSearch }: SearchFilterProps) => {
     >
       <Searchbar
         size="small"
-        placeholder="Filter by title..."
-        value={searchValue} // Bind the input value to state
-        onChange={(e) => {
-          setSearchValue(e.target.value); // Update the state
-          onSearch(e.target.value); // Notify parent about the search input
-        }}
+        placeholder="Search books"
+        value={searchValue}
+        onChange={(e) => setSearchValue(e.target.value)} // Only update state, no immediate search
         InputProps={{
-          startAdornment: (
-            <InputAdornment position="start">
-              <SearchIcon />
-            </InputAdornment>
-          ),
-          endAdornment: searchValue && ( // Conditionally render the clear icon
+          endAdornment: searchValue && (
             <InputAdornment position="end">
               <IconButton onClick={handleClear} size="small">
                 <ClearIcon />
@@ -75,6 +79,20 @@ const SearchFilter = ({ onSearch }: SearchFilterProps) => {
           ),
         }}
       />
+      <Button
+        variant="contained"
+        color="primary"
+        onClick={handleSearchClick} // Trigger search on click
+        startIcon={<SearchIcon />} // Add the search icon inside the button
+        sx={{
+          minWidth: "120px",
+          borderRadius: "50px",
+          textTransform: "none",
+          width: isMobile ? "100%" : "auto", // Full-width on mobile
+        }}
+      >
+        Search
+      </Button>
     </Box>
   );
 };

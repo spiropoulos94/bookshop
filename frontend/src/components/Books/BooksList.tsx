@@ -6,36 +6,62 @@ import BookItem from "./BookItem";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import SearchFilter from "../filters/SearchFilter";
 
+let debounceTimeout: NodeJS.Timeout;
+
 const BooksList = () => {
+  const params = new URLSearchParams(window.location.search);
+  const initialSearch = params.get("search") || "";
+  const initialPage = parseInt(params.get("page") || "1", 10);
+
   const [books, setBooks] = useState<Book[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
   const [showButton, setShowButton] = useState<boolean>(false);
-  const [searchQuery, setSearchQuery] = useState<string>("");
-  const [currentPage, setCurrentPage] = useState<number>(1); // Current page state
-  const [totalPages, setTotalPages] = useState<number>(0); // Total pages state
-  const pageSize = 30; // Define the number of books per page
+  const [searchQuery, setSearchQuery] = useState<string>(initialSearch);
+  const [currentPage, setCurrentPage] = useState<number>(initialPage);
+  const [totalPages, setTotalPages] = useState<number>(0);
+  const pageSize = 30;
+
+  const updateUrl = (query: string, page: number) => {
+    const newParams = new URLSearchParams();
+
+    // Add `search` only if it has a value
+    if (query) {
+      newParams.set("search", query);
+    }
+
+    // Add `page` only if it's greater than 1
+    if (page > 1) {
+      newParams.set("page", page.toString());
+    }
+
+    // Determine if there are any parameters to add
+    const paramString = newParams.toString();
+    const newUrl = paramString
+      ? `${window.location.pathname}?${paramString}`
+      : window.location.pathname;
+
+    // Update the URL without reloading the page
+    window.history.pushState(null, "", newUrl);
+  };
+
+  const fetchBooks = async (query: string, page: number) => {
+    setLoading(true);
+    const { books, error, totalPages } = await GetBooks(pageSize, page, query);
+    if (error) {
+      console.error(error);
+      setError(error);
+      setLoading(false);
+      return;
+    }
+    setBooks(books || []);
+    setTotalPages(totalPages || 0);
+    setLoading(false);
+  };
 
   useEffect(() => {
-    const fetchBooks = async () => {
-      setLoading(true);
-      const { books, error, totalPages } = await GetBooks(
-        pageSize,
-        currentPage
-      ); // Fetch books with pagination
-      if (error) {
-        console.error(error);
-        setError(error);
-        setLoading(false);
-        return;
-      }
-      setBooks(books || []);
-      setTotalPages(totalPages || 0); // Set total pages
-      setLoading(false);
-    };
-    fetchBooks();
-    setSearchQuery(""); // Reset search query on page change
-  }, [currentPage]); // Fetch books when currentPage changes
+    fetchBooks(searchQuery, currentPage);
+  }, [searchQuery, currentPage]);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -54,6 +80,27 @@ const BooksList = () => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
+  const handleSearch = (query: string) => {
+    setSearchQuery(query);
+    setCurrentPage(1); // Reset to first page on search
+
+    if (debounceTimeout) {
+      clearTimeout(debounceTimeout);
+    }
+    debounceTimeout = setTimeout(() => {
+      updateUrl(query, 1); // Update URL accordingly
+      fetchBooks(query, 1); // Fetch new results
+    }, 300);
+  };
+
+  const handlePageChange = (
+    event: React.ChangeEvent<unknown>,
+    value: number
+  ) => {
+    setCurrentPage(value);
+    updateUrl(searchQuery, value); // Update URL with new page value
+  };
+
   if (error) {
     return <div>Error: {error}</div>;
   }
@@ -62,30 +109,13 @@ const BooksList = () => {
     console.log("Adding to cart", book);
   };
 
-  const handleSearch = (query: string) => {
-    setSearchQuery(query);
-    setCurrentPage(1); // Reset to first page on search
-    console.log("Searching for", query);
-  };
-
-  const filteredBooks = books.filter((book) =>
-    book.title.toLowerCase().includes(searchQuery.toLowerCase())
-  );
-
-  const handlePageChange = (
-    event: React.ChangeEvent<unknown>,
-    value: number
-  ) => {
-    setCurrentPage(value); // Update current page on pagination change
-  };
-
   return (
     <Stack>
-      <SearchFilter onSearch={handleSearch} />
+      <SearchFilter onSearch={handleSearch} defaultValue={searchQuery} />
       <Pagination
-        count={totalPages} // Use totalPages from API response
-        page={currentPage} // Current page state
-        onChange={handlePageChange} // Handle page change
+        count={totalPages}
+        page={currentPage}
+        onChange={handlePageChange}
         variant="outlined"
         color="primary"
         sx={{
@@ -96,8 +126,8 @@ const BooksList = () => {
         <Loading />
       ) : (
         <Stack>
-          {filteredBooks.length > 0 ? (
-            filteredBooks.map((book) => (
+          {books.length > 0 ? (
+            books.map((book) => (
               <BookItem key={book.id} book={book} onAddToCart={addToCart} />
             ))
           ) : (

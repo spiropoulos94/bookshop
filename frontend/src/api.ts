@@ -29,7 +29,7 @@ export const GetBooks = async (
 ): Promise<GetBooksResponse> => {
   try {
     const response = await fetch(
-      `${BACKEND_API_URL}/api/books?searc=${searchTerm}&pageSize=${pageSize}&page=${page}`
+      `${BACKEND_API_URL}/api/books?search=${searchTerm}&pageSize=${pageSize}&page=${page}`
     ); // Mock API URL
     if (!response.ok) {
       const errorData = await response.json(); // Extract the error details from the response
