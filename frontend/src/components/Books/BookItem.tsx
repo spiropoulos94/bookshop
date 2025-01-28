@@ -7,6 +7,29 @@ import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import ExpandLessIcon from "@mui/icons-material/ExpandLess";
 import { Book } from "../../api";
 
+// Placeholder SVG for books without images
+const PlaceholderImage = () => (
+  <svg
+    width="100"
+    height="150"
+    viewBox="0 0 100 150"
+    xmlns="http://www.w3.org/2000/svg"
+    style={{ display: "block", margin: "auto" }}
+  >
+    <rect width="100" height="150" fill="#e0e0e0" />
+    <text
+      x="50"
+      y="75"
+      fill="#b0b0b0"
+      fontSize="12"
+      textAnchor="middle"
+      dominantBaseline="middle"
+    >
+      No Image
+    </text>
+  </svg>
+);
+
 interface BookItemProps {
   book: Book;
   onAddToCart: (book: Book) => void;
@@ -44,13 +67,17 @@ const BookItem = ({ book, onAddToCart }: BookItemProps) => {
         borderRadius={1}
         border={`1px solid ${theme.palette.divider}`}
       >
-        <img
-          src={book.thumbnail}
-          alt={book.title}
-          width={100}
-          height={150}
-          style={{ objectFit: "cover" }}
-        />
+        {book.thumbnail ? (
+          <img
+            src={book.thumbnail}
+            alt={book.title}
+            width={100}
+            height={150}
+            style={{ objectFit: "cover" }}
+          />
+        ) : (
+          <PlaceholderImage />
+        )}
       </Box>
 
       {/* Book Details */}
