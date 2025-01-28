@@ -36,7 +36,7 @@ func Load() Config {
 		},
 		GoogleBooksConfig: GoogleBooksConfig{
 			APIKey:  getEnv("GOOGLE_BOOKS_API_KEY", ""),
-			BaseURL: getEnv("GOOGLE_BOOKS_API_KEY", ""),
+			BaseURL: getEnv("GOOGLE_BOOKS_API_BASE_URL", ""),
 		},
 	}
 }

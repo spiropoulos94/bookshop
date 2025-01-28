@@ -17,6 +17,7 @@ func Build(c *container.Container) {
 
 	// Routes
 	router.GET("/health", handlers.HealthHandler(c))
+	router.GET("/books", handlers.GetBookHandler(c))
 
 	// Static files
 	router.GET("/", handlers.FrontendHandler(c))

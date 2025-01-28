@@ -12,7 +12,7 @@ type GoogleBooksRepository struct {
 
 func NewGoogleBooksRepository(c *config.GoogleBooksConfig) *GoogleBooksRepository {
 
-	googleApiClient := clients.NewGoogleBooksClient()
+	googleApiClient := clients.NewGoogleBooksClient(c.BaseURL)
 
 	return &GoogleBooksRepository{
 		Config: c,
