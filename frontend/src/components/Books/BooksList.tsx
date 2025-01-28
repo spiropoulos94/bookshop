@@ -4,6 +4,7 @@ import { Book, GetBooks } from "../../api";
 import { Stack, Fab } from "@mui/material";
 import BookItem from "./BookItem";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
+import SearchFilter from "../filters/SearchFilter";
 
 type Props = {};
 
@@ -61,9 +62,14 @@ const BooksList = ({}: Props) => {
     console.log("Adding to cart", book);
   };
 
+  const handleSearch = (query: string) => {
+    console.log("Searching for", query);
+  };
+
   return (
-    <>
-      <Stack padding={2} maxWidth={"1200px"} mx={"auto"}>
+    <Stack maxWidth={"1200px"} mx={"auto"} padding={3}>
+      <SearchFilter onSearch={handleSearch} />
+      <Stack>
         {books.map((book) => (
           <BookItem key={book.id} book={book} onAddToCart={addToCart} />
         ))}
@@ -84,7 +90,7 @@ const BooksList = ({}: Props) => {
       >
         <KeyboardArrowUpIcon />
       </Fab>
-    </>
+    </Stack>
   );
 };
 
