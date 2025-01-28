@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import Loading from "../Loading";
 import { Book, GetBooks } from "../../api";
-import { Stack, Fab } from "@mui/material";
+import { Stack, Fab, Typography } from "@mui/material";
 import BookItem from "./BookItem";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import SearchFilter from "../filters/SearchFilter";
@@ -78,9 +78,15 @@ const BooksList = ({}: Props) => {
     <Stack>
       <SearchFilter onSearch={handleSearch} />
       <Stack>
-        {filteredBooks.map((book) => (
-          <BookItem key={book.id} book={book} onAddToCart={addToCart} />
-        ))}
+        {filteredBooks.length > 0 ? (
+          filteredBooks.map((book) => (
+            <BookItem key={book.id} book={book} onAddToCart={addToCart} />
+          ))
+        ) : (
+          <Typography variant="h6">
+            No books found for the search query: "{searchQuery}"
+          </Typography>
+        )}
       </Stack>
       {/* Show Back to Top button with smooth transition */}
       <Fab
