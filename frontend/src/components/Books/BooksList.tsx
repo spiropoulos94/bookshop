@@ -68,21 +68,22 @@ const BooksList = ({}: Props) => {
           <BookItem key={book.id} book={book} onAddToCart={addToCart} />
         ))}
       </Stack>
-      {/* Show Back to Top button only if user scrolled down */}
-      {showButton && (
-        <Fab
-          color="primary"
-          aria-label="scroll back to top"
-          onClick={handleScrollToTop}
-          sx={{
-            position: "fixed",
-            bottom: 16,
-            right: 16,
-          }}
-        >
-          <KeyboardArrowUpIcon />
-        </Fab>
-      )}
+      {/* Show Back to Top button with smooth transition */}
+      <Fab
+        color="primary"
+        aria-label="scroll back to top"
+        onClick={handleScrollToTop}
+        sx={{
+          position: "fixed",
+          bottom: 16,
+          right: 16,
+          opacity: showButton ? 1 : 0,
+          visibility: showButton ? "visible" : "hidden",
+          transition: "opacity 0.3s ease, visibility 0.3s ease",
+        }}
+      >
+        <KeyboardArrowUpIcon />
+      </Fab>
     </>
   );
 };
