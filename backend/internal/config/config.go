@@ -14,6 +14,7 @@ type Config struct {
 	ServerConfig
 	FrontendConfig
 	GoogleBooksConfig
+	OpenLibraryConfig
 }
 
 // Load loads configuration from environment variables
@@ -37,6 +38,9 @@ func Load() Config {
 		GoogleBooksConfig: GoogleBooksConfig{
 			APIKey:  getEnv("GOOGLE_BOOKS_API_KEY", ""),
 			BaseURL: getEnv("GOOGLE_BOOKS_API_BASE_URL", ""),
+		},
+		OpenLibraryConfig: OpenLibraryConfig{
+			BaseURL: getEnv("OPEN_LIBRARY_API_BASE_URL", ""),
 		},
 	}
 }
