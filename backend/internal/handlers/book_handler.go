@@ -1,7 +1,6 @@
 package handlers
 
 import (
-	"fmt"
 	"net/http"
 	"spiropoulos04/bookshop/backend/internal/container"
 	"strconv"
@@ -13,7 +12,6 @@ import (
 func GetBookHandler(c *container.Container) gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		// Get the searchParams from the query string, with a default value of "books"
-		searchParams := ctx.DefaultQuery("search", "books")
 		pageSize := ctx.Query("pageSize")
 		startIndex := ctx.Query("startIndex")
 
@@ -42,8 +40,7 @@ func GetBookHandler(c *container.Container) gin.HandlerFunc {
 		}
 
 		// Call the BooksService to get the list of books based on the search parameters
-		fmt.Println("GetBooks handler searchParams: ", searchParams)
-		books, err := c.Services.BooksService.GetBookList(searchParams, pageSizeInt, startIndexInt)
+		books, err := c.Services.BooksService.GetBookList(pageSizeInt, startIndexInt)
 		if err != nil {
 			// Handle the error (return an appropriate HTTP status and message)
 			ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})

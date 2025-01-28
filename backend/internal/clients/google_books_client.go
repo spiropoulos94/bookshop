@@ -21,13 +21,11 @@ func NewGoogleBooksClient(baseUrl string) *GoogleBooksClient {
 }
 
 // GetBookList fetches a list of books based on search terms
-// GetBookList fetches a list of books based on search terms
-func (gbc *GoogleBooksClient) GetBookList(searchTerms string, pageSize int, startIndex int) ([]models.Book, error) {
-	fmt.Println("GoogleBooksClient GetBookList searchTerms: ", searchTerms)
+func (gbc *GoogleBooksClient) GetBookList(pageSize int, startIndex int) ([]models.Book, error) {
 	fmt.Println("GoogleBooksClient GetBookList pageSize: ", pageSize, ", startIndex: ", startIndex)
 
 	// Construct the API endpoint with the search terms, pageSize, and startIndex
-	url := fmt.Sprintf("%s/volumes?q=%s&maxResults=%d&startIndex=%d", gbc.BaseURL, searchTerms, pageSize, startIndex)
+	url := fmt.Sprintf("%s/volumes?q=nosql&maxResults=%d&startIndex=%d", gbc.BaseURL, pageSize, startIndex)
 
 	fmt.Println("GoogleBooksClient GetBookList url: ", url)
 
@@ -74,9 +72,11 @@ func (gbc *GoogleBooksClient) GetBookList(searchTerms string, pageSize int, star
 			}(),
 		}
 
-		// Map the price if available
+		// Ensure price is always included
 		if volume.SaleInfo.ListPrice.Amount != 0 {
 			book.Price = volume.SaleInfo.ListPrice.Amount
+		} else {
+			book.Price = 0.0 // Default value when price is missing
 		}
 
 		books = append(books, book)

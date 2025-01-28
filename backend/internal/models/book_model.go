@@ -5,7 +5,7 @@ type Book struct {
 	Title          string   `json:"title"`
 	Description    string   `json:"description"`
 	PageCount      int      `json:"pageCount"`
-	Price          float64  `json:"price,omitempty"` // Use `omitempty` to handle cases where the price isn't provided
+	Price          float64  `json:"price"` // Price will always be included
 	MaturityRating string   `json:"maturityRating"`
 	Thumbnail      string   `json:"thumbnail"`       // Mapping thumbnail directly for ease
 	ISBNs          []string `json:"isbns,omitempty"` // Collect all ISBNs into a slice

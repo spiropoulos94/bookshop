@@ -1,7 +1,6 @@
 package services
 
 import (
-	"fmt"
 	"spiropoulos04/bookshop/backend/internal/models"
 	"spiropoulos04/bookshop/backend/internal/repositories"
 )
@@ -16,7 +15,6 @@ func NewBooksService(googleBooksRepository *repositories.GoogleBooksRepository) 
 	}
 }
 
-func (bs *BooksService) GetBookList(search string, pageSize int, startIndex int) ([]models.Book, error) {
-	fmt.Println("BooksService GetBookList search: ", search)
-	return bs.GoogleBooksRepository.Client.GetBookList(search, pageSize, startIndex)
+func (bs *BooksService) GetBookList(pageSize int, startIndex int) ([]models.Book, error) {
+	return bs.GoogleBooksRepository.Client.GetBookList(pageSize, startIndex)
 }
