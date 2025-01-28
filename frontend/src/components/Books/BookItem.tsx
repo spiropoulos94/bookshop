@@ -34,13 +34,6 @@ const BookItem = ({ book, onAddToCart }: BookItemProps) => {
       alignItems={{ xs: "flex-start", sm: "center" }}
       gap={2}
       boxShadow={theme.shadows[2]}
-      sx={{
-        "&:hover": {
-          boxShadow: theme.shadows[4],
-          transform: "scale(1.01)",
-          transition: "transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out",
-        },
-      }}
     >
       {/* Thumbnail */}
       <Box
