@@ -27,7 +27,17 @@ const Searchbar = styled(TextField)(() => ({
 
 const SearchFilter = ({ onSearch }: SearchFilterProps) => {
   return (
-    <Box pt={"24px"} pb={"16px"} ml={"auto"} width={"100%"} maxWidth={"400px"}>
+    <Box
+      pt={"24px"}
+      pb={"16px"}
+      ml={"auto"}
+      mb={"20px"}
+      width={{
+        xs: "100%",
+        md: "400px",
+      }}
+      //   maxWidth={"400px"}
+    >
       <Searchbar
         size="small"
         placeholder="Search by title..."
