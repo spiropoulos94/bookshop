@@ -1,51 +1,51 @@
 import { useEffect, useState } from "react";
-import { BACKEND_API_URL } from "../../constants";
+import Loading from "../Loading";
+import { Book, GetBooks } from "../../api";
+import { Stack } from "@mui/material";
+import BookItem from "./BookItem";
 
 type Props = {};
 
 const BooksList = ({}: Props) => {
-  const [books, setBooks] = useState<any[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
-  const [error] = useState<string | null>(null);
+  const [books, setBooks] = useState<Book[]>([]);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchBooks = async () => {
-      try {
-        const response = await fetch(`${BACKEND_API_URL}/api/books`); // Mock API URL
-        if (!response.ok) {
-          throw new Error("Network response was not ok");
-        }
-        const data = await response.json();
-        console.log({ data });
-        setBooks(data);
-      } catch (error) {
-        console.log({ error });
-        // setError(error.message);
-      } finally {
+      setLoading(true);
+      const { data, error } = await GetBooks();
+      if (error) {
+        console.error(error);
+        setError(error);
         setLoading(false);
+        return;
       }
+      console.log({ data });
+      setBooks(data || []);
+      setLoading(false);
     };
-
     fetchBooks();
   }, []);
 
   if (loading) {
-    return <div>Loading...</div>;
+    return <Loading />;
   }
 
   if (error) {
     return <div>Error: {error}</div>;
   }
 
+  const addToCart = (book: Book) => {
+    console.log("Adding to cart", book);
+  };
+
   return (
-    <div>
-      <h1>Books List</h1>
-      <ul>
-        {books.map((book) => (
-          <li key={book.id}>{book.title}</li> // Assuming each book has an id and title
-        ))}
-      </ul>
-    </div>
+    <Stack padding={2} maxWidth={"1200px"} mx={"auto"}>
+      {books.map((book) => (
+        <BookItem book={book} onAddToCart={addToCart} />
+      ))}
+    </Stack>
   );
 };
 

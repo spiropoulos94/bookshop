@@ -1,4 +1,4 @@
-import { Stack } from "@mui/material";
+import { CssBaseline, Stack } from "@mui/material";
 import { ThemeProvider } from "@mui/material/styles";
 import theme from "../../styles/theme";
 
@@ -11,7 +11,7 @@ const Layout = ({ children }: LayoutProps) => {
     <ThemeProvider theme={theme}>
       <Stack
         height={"100vh"}
-        width={"100vw"}
+        width={"100%"}
         boxSizing={"border-box"}
         minWidth={"330px"}
       >
