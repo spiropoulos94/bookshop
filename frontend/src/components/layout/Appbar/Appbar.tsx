@@ -1,6 +1,5 @@
 import {
   Box,
-  Button,
   IconButton,
   AppBar as MUIAppbar,
   Toolbar,
