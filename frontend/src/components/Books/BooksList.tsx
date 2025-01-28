@@ -13,6 +13,7 @@ const BooksList = ({}: Props) => {
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
   const [showButton, setShowButton] = useState<boolean>(false);
+  const [searchQuery, setSearchQuery] = useState<string>(""); // New state for the search query
 
   useEffect(() => {
     const fetchBooks = async () => {
@@ -62,15 +63,22 @@ const BooksList = ({}: Props) => {
     console.log("Adding to cart", book);
   };
 
+  // Update handleSearch to set the search query
   const handleSearch = (query: string) => {
+    setSearchQuery(query);
     console.log("Searching for", query);
   };
 
+  // Filter books based on the search query
+  const filteredBooks = books.filter((book) =>
+    book.title.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
   return (
-    <Stack maxWidth={"1200px"} mx={"auto"} padding={3}>
+    <Stack>
       <SearchFilter onSearch={handleSearch} />
       <Stack>
-        {books.map((book) => (
+        {filteredBooks.map((book) => (
           <BookItem key={book.id} book={book} onAddToCart={addToCart} />
         ))}
       </Stack>
