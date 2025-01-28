@@ -43,6 +43,10 @@ func Load() Config {
 		OpenLibraryConfig: OpenLibraryConfig{
 			BaseURL: getEnv("OPEN_LIBRARY_API_BASE_URL", ""),
 		},
+		RedisConfig: RedisConfig{
+			Address:  getEnv("REDIS_ADDRESS", "localhost:6379"),
+			Password: getEnv("REDIS_PASSWORD", ""),
+		},
 	}
 }
 

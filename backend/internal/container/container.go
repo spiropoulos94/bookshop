@@ -40,7 +40,6 @@ func (c *Container) Shutdown(ctx context.Context) error {
 // InitConfig initializes the environment configuration
 func (c *Container) InitConfig() {
 	envConfig := config.Load()
-
 	c.EnvConfig = &envConfig
 }
 
