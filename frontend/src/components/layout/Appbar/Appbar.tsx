@@ -12,7 +12,7 @@ interface AppbarProps {}
 
 const Appbar = ({}: AppbarProps) => {
   return (
-    <Box sx={{ flexGrow: 1 }}>
+    <Box>
       <MUIAppbar position="static">
         <Toolbar>
           <IconButton
