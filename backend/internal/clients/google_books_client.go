@@ -58,6 +58,7 @@ func (gbc *GoogleBooksClient) GetBookList(pageSize int, startIndex int) ([]model
 	for _, volume := range booksResponse.Items {
 		// Map VolumeInfo to Book
 		book := models.Book{
+			ID:             volume.ID,
 			Title:          volume.VolumeInfo.Title,
 			Description:    volume.VolumeInfo.Description,
 			PageCount:      volume.VolumeInfo.PageCount,

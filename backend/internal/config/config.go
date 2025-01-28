@@ -12,6 +12,7 @@ import (
 // Config holds application configuration
 type Config struct {
 	ServerConfig
+	RedisConfig
 	FrontendConfig
 	GoogleBooksConfig
 	OpenLibraryConfig

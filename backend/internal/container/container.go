@@ -9,13 +9,15 @@ import (
 	"spiropoulos04/bookshop/backend/internal/services"
 
 	"github.com/gin-gonic/gin"
+	"github.com/redis/go-redis/v9"
 )
 
 type Container struct {
 	EnvConfig    *config.Config
 	Server       *http.Server
 	Repositories *repositories.Repositories
-	Services     *services.Services // Or a specific struct to hold your services
+	Services     *services.Services
+	Redis        *redis.Client
 }
 
 // NewContainer initializes a new container
@@ -70,11 +72,26 @@ func (c *Container) InitServices() {
 	}
 }
 
+// InitRedis initializes the Redis client
+func (c *Container) InitRedis() {
+	c.Redis = redis.NewClient(&redis.Options{
+		Addr:     c.EnvConfig.RedisConfig.Address,  // e.g., "localhost:6379"
+		Password: c.EnvConfig.RedisConfig.Password, // No password set by default
+	})
+
+	// Test the Redis connection
+	ctx := context.Background()
+	if err := c.Redis.Ping(ctx).Err(); err != nil {
+		panic(fmt.Sprintf("failed to connect to Redis: %v", err))
+	}
+}
+
 func (c *Container) InitContainer() *Container {
 	c.InitConfig()
 	c.InitServer()
 	c.InitRepositories()
 	c.InitServices()
+	c.InitRedis()
 
 	return c
 }

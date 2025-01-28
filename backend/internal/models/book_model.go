@@ -2,6 +2,7 @@ package models
 
 // Struct to represent parts of the API response
 type Book struct {
+	ID             string  `json:"id"`
 	Title          string  `json:"title"`
 	Description    string  `json:"description"`
 	PageCount      int     `json:"pageCount"`
@@ -13,6 +14,7 @@ type Book struct {
 }
 
 type Volume struct {
+	ID         string `json:"id"`
 	VolumeInfo struct {
 		Book
 		ImageLinks struct {
