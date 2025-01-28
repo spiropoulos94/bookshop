@@ -47,8 +47,5 @@ func (bs *BooksService) GetBookList(pageSize int, startIndex int) ([]models.Book
 		updatedBooks = append(updatedBooks, book)
 	}
 
-	fmt.Println("Books length: ", len(books))
-	fmt.Println("Updated books length: ", len(updatedBooks))
-
 	return updatedBooks, nil
 }
