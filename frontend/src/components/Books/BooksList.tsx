@@ -1,10 +1,11 @@
 import { useEffect, useState } from "react";
 import Loading from "../Loading";
 import { Book, GetBooks } from "../../api";
-import { Stack, Fab, Typography, Pagination } from "@mui/material";
+import { Stack, Fab, Typography } from "@mui/material";
 import BookItem from "./BookItem";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import SearchFilter from "../filters/SearchFilter";
+import PaginationFilter from "../filters/PaginationFilter";
 
 let debounceTimeout: NodeJS.Timeout;
 
@@ -112,15 +113,10 @@ const BooksList = () => {
   return (
     <Stack>
       <SearchFilter onSearch={handleSearch} defaultValue={searchQuery} />
-      <Pagination
+      <PaginationFilter
         count={totalPages}
         page={currentPage}
         onChange={handlePageChange}
-        variant="outlined"
-        color="primary"
-        sx={{
-          mb: 2,
-        }}
       />
       {loading ? (
         <Loading />
