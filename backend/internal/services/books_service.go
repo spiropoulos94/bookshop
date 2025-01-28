@@ -19,9 +19,9 @@ func NewBooksService(googleBooksRepository *repositories.GoogleBooksRepository, 
 	}
 }
 
-func (bs *BooksService) GetBookList(pageSize int, startIndex int) (*models.APIResponse, error) {
-	// Fetch the list of books from the Google Books API
-	booksResponse, err := bs.GoogleBooksRepository.Client.GetBookList(pageSize, startIndex)
+func (bs *BooksService) GetBookList(pageSize int, startIndex int, searchTerm string) (*models.APIResponse, error) {
+	// Fetch the list of books from the Google Books API using the search term
+	booksResponse, err := bs.GoogleBooksRepository.Client.GetBookList(pageSize, startIndex, searchTerm)
 	if err != nil {
 		return nil, err // Handle error from GoogleBooksClient
 	}
