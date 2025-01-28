@@ -19,9 +19,14 @@ export interface GetBooksResponse {
   error?: string; // The error message if the request fails
 }
 
-export const GetBooks = async (): Promise<GetBooksResponse> => {
+export const GetBooks = async (
+  pageSize: number = 40,
+  startIndex: number = 0
+): Promise<GetBooksResponse> => {
   try {
-    const response = await fetch(`${BACKEND_API_URL}/api/books?pageSize=40`); // Mock API URL
+    const response = await fetch(
+      `${BACKEND_API_URL}/api/books?pageSize=${pageSize}&startIndex=${startIndex}`
+    ); // Mock API URL
     if (!response.ok) {
       throw new Error("Network response was not ok");
     }
