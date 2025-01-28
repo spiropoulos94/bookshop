@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"spiropoulos04/bookshop/backend/internal/models"
 	"spiropoulos04/bookshop/backend/internal/repositories"
+	"sync"
 )
 
 type BooksService struct {
@@ -27,25 +28,36 @@ func (bs *BooksService) GetBookList(pageSize int, startIndex int) ([]models.Book
 
 	// Create a new slice to hold books with revision numbers
 	var updatedBooks []models.Book
+	var mu sync.Mutex // Mutex to safely append to the slice
+	var wg sync.WaitGroup
 
 	for _, book := range books {
-		// Check if the book has an ISBN
-		if book.ISBN != "" {
-			// Get the revision number for the book
-			revisionNumber, err := bs.OpenLibraryRepository.Client.GetRevisionNumber(book.ISBN)
-			if err != nil {
-				// Log the error (using a logging library or fmt for simplicity)
-				fmt.Printf("Error fetching revision number for ISBN %s: %v\n", book.ISBN, err)
-				// No need to skip the book, just do not set the revision number
-			} else {
-				// Set the revision number for the book if successfully fetched
-				book.RevisionNumber = revisionNumber
-			}
-		}
+		wg.Add(1) // Increment the wait group counter
+		go func(b models.Book) {
+			defer wg.Done() // Decrement the counter when the goroutine completes
 
-		// Append the updated book to the new slice, regardless of ISBN
-		updatedBooks = append(updatedBooks, book)
+			// Check if the book has an ISBN
+			if b.ISBN != "" {
+				// Get the revision number for the book
+				revisionNumber, err := bs.OpenLibraryRepository.Client.GetRevisionNumber(b.ISBN)
+				if err != nil {
+					// Log the error
+					fmt.Printf("Error fetching revision number for ISBN %s: %v\n", b.ISBN, err)
+					// No need to set the revision number in case of an error
+				} else {
+					// Set the revision number for the book if successfully fetched
+					b.RevisionNumber = revisionNumber
+				}
+			}
+
+			// Lock the mutex to append the book safely to the slice
+			mu.Lock()
+			updatedBooks = append(updatedBooks, b)
+			mu.Unlock()
+		}(book) // Pass the current book as an argument to the goroutine
 	}
+
+	wg.Wait() // Wait for all goroutines to finish
 
 	return updatedBooks, nil
 }
