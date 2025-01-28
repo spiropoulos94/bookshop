@@ -23,7 +23,7 @@ export interface GetBooksResponse {
 }
 
 export const GetBooks = async (
-  pageSize: number = 10,
+  pageSize: number = 30,
   page: number = 1
 ): Promise<GetBooksResponse> => {
   try {
