@@ -1,6 +1,7 @@
 package services
 
 import (
+	"fmt"
 	"spiropoulos04/bookshop/backend/internal/models"
 	"spiropoulos04/bookshop/backend/internal/repositories"
 )
@@ -18,5 +19,34 @@ func NewBooksService(googleBooksRepository *repositories.GoogleBooksRepository, 
 }
 
 func (bs *BooksService) GetBookList(pageSize int, startIndex int) ([]models.Book, error) {
-	return bs.GoogleBooksRepository.Client.GetBookList(pageSize, startIndex)
+	// Fetch the list of books
+	books, err := bs.GoogleBooksRepository.Client.GetBookList(pageSize, startIndex)
+	if err != nil {
+		return nil, err // Handle error from GoogleBooksClient
+	}
+
+	// Create a new slice to hold books with revision numbers
+	var updatedBooks []models.Book
+
+	for _, book := range books {
+		// Check if the book has an ISBN
+		if book.ISBN != "" {
+			// Get the revision number for the book
+			revisionNumber, err := bs.OpenLibraryRepository.Client.GetRevisionNumber(book.ISBN)
+			if err != nil {
+				// Log the error (using a logging library or fmt for simplicity)
+				fmt.Printf("Error fetching revision number for ISBN %s: %v\n", book.ISBN, err)
+				// Skip this book if there's an error
+				continue
+			}
+
+			// Set the revision number for the book
+			book.RevisionNumber = revisionNumber
+		}
+
+		// Append the updated book to the new slice
+		updatedBooks = append(updatedBooks, book)
+	}
+
+	return updatedBooks, nil
 }
