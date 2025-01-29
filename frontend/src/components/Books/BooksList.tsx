@@ -24,7 +24,7 @@ const BooksList = () => {
   const [totalPages, setTotalPages] = useState<number>(0);
   const pageSize = 30;
 
-  const { addToCart } = useCart();
+  const { addToCart, cartItems } = useCart();
 
   const updateUrl = (query: string, page: number) => {
     const newParams = new URLSearchParams();
@@ -110,6 +110,9 @@ const BooksList = () => {
   }
 
   const handleAddToCart = (book: Book) => {
+    if (cartItems.find((item) => item.id === book.id)) {
+      return;
+    }
     addToCart(book);
   };
 
