@@ -15,7 +15,7 @@ interface CartItemProps {
 
 const CartItem: React.FC<CartItemProps> = ({ item }) => {
   const theme = useTheme(); // Get theme from context
-  const { incrementQuantity, decrementQuantity, removeItem } = useCart();
+  const { incrementQuantity, decrementQuantity, deleteFromCart } = useCart();
   const [error, setError] = useState(false);
 
   // Calculate the total price
@@ -57,7 +57,7 @@ const CartItem: React.FC<CartItemProps> = ({ item }) => {
       {/* Remove Item Button */}
       <IconButton
         size="small"
-        onClick={() => removeItem(item.id)}
+        onClick={() => deleteFromCart(item.id)}
         sx={{
           p: 0,
           color: theme.palette.error.main,
