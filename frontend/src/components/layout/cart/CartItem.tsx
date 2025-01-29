@@ -142,7 +142,6 @@ const CartItem: React.FC<CartItemProps> = ({ item }) => {
             value={inputValue}
             onChange={handleInputChange}
             onBlur={handleBlur}
-            variant="outlined"
             size="small"
             inputProps={{
               style: {
