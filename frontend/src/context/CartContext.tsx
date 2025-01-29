@@ -12,6 +12,7 @@ export interface CartItem extends Book {
 export type CartContextData = {
   cartItems: CartItem[];
   totalPrice: number; // Add totalPrice to the context data
+  totalQuantity: number; // Add totalQuantity to the context data
   addToCart: (book: Book) => void;
   deleteFromCart: (bookId: string) => void;
   incrementQuantity: (bookId: string) => void; // New method
@@ -65,6 +66,11 @@ export default function CartContextProvider({
     );
   };
 
+  // Calculate the total quantity of items in the cart
+  const calculateTotalQuantity = () => {
+    return cartItems.reduce((total, item) => total + item.quantity, 0);
+  };
+
   // Increment the quantity of a specified book in the cart
   const incrementQuantity = (bookId: string) => {
     setCartItems((prevItems) =>
@@ -96,9 +102,13 @@ export default function CartContextProvider({
   // Calculate the total price once and store it in a variable
   const totalPrice = calculateTotalPrice();
 
+  // Calculate the total quantity once and store it in a variable
+  const totalQuantity = calculateTotalQuantity();
+
   const value: CartContextData = {
     cartItems,
     totalPrice, // Include totalPrice in the context value
+    totalQuantity, // Include totalQuantity in the context value
     addToCart,
     deleteFromCart,
     incrementQuantity,

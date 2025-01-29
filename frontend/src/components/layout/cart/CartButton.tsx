@@ -7,12 +7,9 @@ import {
   useCart,
 } from "../../../context/CartContext";
 
-interface CartButtonProps {
-  items: CartItemType[];
-}
-
-const CartButton: React.FC<CartButtonProps> = ({ items }) => {
+const CartButton = () => {
   const [drawerOpen, setDrawerOpen] = useState(false);
+  const { cartItems: items, totalQuantity } = useCart();
   const theme = useTheme();
 
   const toggleDrawer = (open: boolean) => () => {
@@ -29,7 +26,7 @@ const CartButton: React.FC<CartButtonProps> = ({ items }) => {
         }}
       >
         <Badge
-          badgeContent={items.length}
+          badgeContent={totalQuantity}
           color="secondary"
           sx={{
             "& .MuiBadge-badge": {

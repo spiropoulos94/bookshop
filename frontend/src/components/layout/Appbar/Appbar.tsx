@@ -10,7 +10,6 @@ import CartButton from "../cart/CartButton";
 import { useCart } from "../../../context/CartContext";
 
 const Appbar = () => {
-  const { cartItems } = useCart();
   return (
     <Box>
       <MUIAppbar position="static">
@@ -35,7 +34,7 @@ const Appbar = () => {
             ScyllaDB Bookshop
           </Typography>
           {/* Cart Button Here */}
-          <CartButton items={cartItems} />
+          <CartButton />
         </Toolbar>
       </MUIAppbar>
     </Box>
