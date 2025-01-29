@@ -81,7 +81,7 @@ const BookItem = ({ book, onAddToCart }: BookItemProps) => {
       </Box>
 
       {/* Book Details */}
-      <Box flex={1} display="flex" flexDirection="column">
+      <Box flex={1} display="flex" flexDirection="column" width={"100%"}>
         <Typography variant="h6" fontWeight={600} gutterBottom>
           {book.title}
           {book.revisionNumber && book.revisionNumber > 1 && (

@@ -1,23 +1,70 @@
-import { PaginationProps, Pagination as MUIPagination } from "@mui/material";
+import React from "react";
+import { Box, Button } from "@mui/material";
+import { ArrowBack, ArrowForward } from "@mui/icons-material"; // Import Material-UI icons
 
-interface CustomPaginationProps extends PaginationProps {}
+interface CustomPaginationProps {
+  currentPage: number;
+  onPageChange: (page: number) => void;
+}
 
-const PaginationFilter = (props: CustomPaginationProps) => {
+const PaginationFilter: React.FC<CustomPaginationProps> = ({
+  currentPage,
+  onPageChange,
+  isMobile,
+}) => {
+  const handlePrevious = () => {
+    if (currentPage > 1) {
+      onPageChange(currentPage - 1); // Call onPageChange with the previous page
+    }
+  };
+
+  const handleNext = () => {
+    onPageChange(currentPage + 1); // Call onPageChange with the next page
+  };
+
   return (
-    <MUIPagination
-      {...props}
-      variant="outlined"
-      color="primary"
+    <Box
       sx={{
-        mb: 2,
-        "& .MuiPaginationItem-root": {
-          color: "black", // Change the color of the pagination numbers to red
-        },
-        "& .MuiPaginationItem-ellipsis": {
-          color: "black", // Change color of ellipsis
+        display: "flex",
+        justifyContent: "space-between",
+        marginBottom: "16px",
+        maxWidth: {
+          xs: "100%",
+          sm: "200px",
         },
       }}
-    />
+    >
+      <Button
+        variant="contained"
+        color="primary"
+        onClick={handlePrevious}
+        disabled={currentPage === 1} // Disable if on the first page
+        startIcon={<ArrowBack />} // Add icon for Previous button
+        sx={{
+          minWidth: "120px",
+          borderRadius: "50px",
+          textTransform: "none",
+          width: isMobile ? "100%" : "auto", // Full-width on mobile
+          marginRight: "8px", // Space between buttons
+        }}
+      >
+        Previous
+      </Button>
+      <Button
+        variant="contained"
+        color="primary"
+        onClick={handleNext}
+        startIcon={<ArrowForward />} // Add icon for Next button
+        sx={{
+          minWidth: "120px",
+          borderRadius: "50px",
+          textTransform: "none",
+          width: isMobile ? "100%" : "auto", // Full-width on mobile
+        }}
+      >
+        Next
+      </Button>
+    </Box>
   );
 };
 

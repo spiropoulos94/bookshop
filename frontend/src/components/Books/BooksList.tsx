@@ -23,6 +23,7 @@ const BooksList = () => {
   const [currentPage, setCurrentPage] = useState<number>(initialPage);
   const [totalPages, setTotalPages] = useState<number>(0);
   const pageSize = 10;
+  console.log({ totalPages });
 
   const { addToCart, cartItems } = useCart();
 
@@ -97,11 +98,7 @@ const BooksList = () => {
     }, 300);
   };
 
-  const handlePageChange = (
-    event: React.ChangeEvent<unknown>,
-    value: number
-  ) => {
-    console.log(event);
+  const handlePageChange = (value: number) => {
     setCurrentPage(value);
     updateUrl(searchQuery, value); // Update URL with new page value
   };
@@ -121,9 +118,8 @@ const BooksList = () => {
     <Stack>
       <SearchFilter onSearch={handleSearch} defaultValue={searchQuery} />
       <PaginationFilter
-        count={totalPages}
-        page={currentPage}
-        onChange={handlePageChange}
+        currentPage={currentPage}
+        onPageChange={handlePageChange}
       />
       {loading ? (
         <Loading />
