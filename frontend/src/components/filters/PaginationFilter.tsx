@@ -1,12 +1,5 @@
 import React from "react";
-import {
-  Box,
-  Button,
-  Select,
-  MenuItem,
-  FormControl,
-  InputLabel,
-} from "@mui/material";
+import { Box, Button, Select, MenuItem, FormControl } from "@mui/material";
 import { ArrowBack, ArrowForward } from "@mui/icons-material";
 import { SelectChangeEvent } from "@mui/material/Select"; // Import SelectChangeEvent
 
