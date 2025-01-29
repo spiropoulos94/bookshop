@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"encoding/json"
+	"log"
 	"net/http"
 	"spiropoulos04/bookshop/backend/internal/container"
 	"spiropoulos04/bookshop/backend/internal/models"
@@ -14,6 +15,10 @@ import (
 // GetBookHandler returns a handler function to get the book list with caching
 func GetBookHandler(c *container.Container) gin.HandlerFunc {
 	return func(ctx *gin.Context) {
+
+		traceID, _ := ctx.Get("TraceID")
+		log.Printf("Handling request with ID: %v", traceID)
+
 		pageSize := ctx.Query("pageSize")
 		page := ctx.Query("page")
 		search := ctx.Query("search")

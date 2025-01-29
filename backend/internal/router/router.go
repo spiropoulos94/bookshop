@@ -33,6 +33,8 @@ func Build(c *container.Container) {
 
 	// Add the middleware to log request duration
 	router.Use(middleware.RequestDurationLogger())
+	// Add the middleware to set the trace ID used in debugging
+	router.Use(middleware.TraceIDMiddleware())
 
 	// Routes
 	router.GET("/health", handlers.HealthHandler(c))
@@ -41,7 +43,7 @@ func Build(c *container.Container) {
 	// Static files
 	router.GET("/", handlers.FrontendHandler(c))
 
-	// Or use a catch-all if no other routes match, but after specific ones
+	// use a catch-all if no other routes match
 	router.NoRoute(handlers.FrontendHandler(c)) // This serves as a catch-all
 
 	c.Server.Handler = router
