@@ -143,6 +143,9 @@ const BookItem = ({ book, onAddToCart }: BookItemProps) => {
         width={{ xs: "100%", sm: "auto" }}
       >
         <Button
+          role="button"
+          aria-label="expand more"
+          className="MuiIconButton-root"
           variant="contained"
           color="secondary"
           onClick={() => onAddToCart(book)}
