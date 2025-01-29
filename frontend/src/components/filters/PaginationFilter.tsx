@@ -10,7 +10,6 @@ interface CustomPaginationProps {
 const PaginationFilter: React.FC<CustomPaginationProps> = ({
   currentPage,
   onPageChange,
-  isMobile,
 }) => {
   const handlePrevious = () => {
     if (currentPage > 1) {
