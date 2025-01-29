@@ -14,6 +14,7 @@ const BooksList = () => {
   const params = new URLSearchParams(window.location.search);
   const initialSearch = params.get("search") || "";
   const initialPage = parseInt(params.get("page") || "1", 10);
+  const initialPageSize = parseInt(params.get("pageSize") || "10", 10); // Initialize page size
 
   const [books, setBooks] = useState<Book[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
@@ -21,38 +22,36 @@ const BooksList = () => {
   const [showButton, setShowButton] = useState<boolean>(false);
   const [searchQuery, setSearchQuery] = useState<string>(initialSearch);
   const [currentPage, setCurrentPage] = useState<number>(initialPage);
-  const [totalPages, setTotalPages] = useState<number>(0);
-  const pageSize = 10;
-  console.log({ totalPages });
+  const [pageSize, setPageSize] = useState<number>(initialPageSize); // New state for page size
+  const [_, setTotalPages] = useState<number>(0);
 
   const { addToCart, cartItems } = useCart();
 
-  const updateUrl = (query: string, page: number) => {
+  const updateUrl = (query: string, page: number, size: number) => {
     const newParams = new URLSearchParams();
 
-    // Add `search` only if it has a value
     if (query) {
       newParams.set("search", query);
     }
-
-    // Add `page` only if it's greater than 1
     if (page > 1) {
       newParams.set("page", page.toString());
     }
+    if (size !== 10) {
+      // Only add pageSize if it's not the default value
+      newParams.set("pageSize", size.toString());
+    }
 
-    // Determine if there are any parameters to add
     const paramString = newParams.toString();
     const newUrl = paramString
       ? `${window.location.pathname}?${paramString}`
       : window.location.pathname;
 
-    // Update the URL without reloading the page
     window.history.pushState(null, "", newUrl);
   };
 
-  const fetchBooks = async (query: string, page: number) => {
+  const fetchBooks = async (query: string, page: number, size: number) => {
     setLoading(true);
-    const { books, error, totalPages } = await GetBooks(pageSize, page, query);
+    const { books, error, totalPages } = await GetBooks(size, page, query);
     if (error) {
       console.error(error);
       setError(error);
@@ -65,8 +64,8 @@ const BooksList = () => {
   };
 
   useEffect(() => {
-    fetchBooks(searchQuery, currentPage);
-  }, [searchQuery, currentPage]);
+    fetchBooks(searchQuery, currentPage, pageSize);
+  }, [searchQuery, currentPage, pageSize]); // Add pageSize to the dependency array
 
   useEffect(() => {
     const handleScroll = () => {
@@ -93,14 +92,21 @@ const BooksList = () => {
       clearTimeout(debounceTimeout);
     }
     debounceTimeout = setTimeout(() => {
-      updateUrl(query, 1); // Update URL accordingly
-      fetchBooks(query, 1); // Fetch new results
+      updateUrl(query, 1, pageSize); // Update URL accordingly
+      fetchBooks(query, 1, pageSize); // Fetch new results
     }, 300);
   };
 
   const handlePageChange = (value: number) => {
     setCurrentPage(value);
-    updateUrl(searchQuery, value); // Update URL with new page value
+    updateUrl(searchQuery, value, pageSize); // Update URL with new page value
+  };
+
+  const handlePageSizeChange = (size: number) => {
+    setPageSize(size);
+    setCurrentPage(1); // Reset to first page on page size change
+    updateUrl(searchQuery, 1, size); // Update URL with new page size
+    fetchBooks(searchQuery, 1, size); // Fetch new results
   };
 
   if (error) {
@@ -119,7 +125,9 @@ const BooksList = () => {
       <SearchFilter onSearch={handleSearch} defaultValue={searchQuery} />
       <PaginationFilter
         currentPage={currentPage}
+        pageSize={pageSize} // Pass pageSize to PaginationFilter
         onPageChange={handlePageChange}
+        onPageSizeChange={handlePageSizeChange} // Pass handler for page size change
       />
       {loading ? (
         <Loading />
