@@ -31,12 +31,7 @@ const CartItem: React.FC<CartItemProps> = ({ item }) => {
   };
 
   const handleDecrement = () => {
-    if (item.quantity > 1) {
-      decrementQuantity(item.id);
-      setError(false);
-    } else {
-      setError(true);
-    }
+    decrementQuantity(item.id);
   };
 
   return (
