@@ -26,6 +26,7 @@ const CartItem: React.FC<CartItemProps> = ({ item }) => {
         mb: 2,
         display: "flex",
         alignItems: "flex-start",
+        cursor: "default",
         "&:hover": {
           opacity: 0.9,
         },
