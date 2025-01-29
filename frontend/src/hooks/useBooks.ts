@@ -46,12 +46,17 @@ const useBooks = (
     fetchBooks(searchQuery, currentPage, pageSize);
   }, [searchQuery, currentPage, pageSize]);
 
+  const handleSearchQueryChange = (query: string) => {
+    setSearchQuery(query);
+    setCurrentPage(1);
+  };
+
   return {
     books,
     loading,
     error,
     searchQuery,
-    setSearchQuery,
+    setSearchQuery: handleSearchQueryChange,
     currentPage,
     setCurrentPage,
     pageSize,

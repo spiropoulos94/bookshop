@@ -87,6 +87,7 @@ const SearchFilter = ({
         }}
       />
       <Button
+        disabled={isLoading}
         variant="contained"
         color="primary"
         onClick={handleSearchClick} // Trigger search on click
