@@ -43,8 +43,8 @@ const PaginationFilter: React.FC<CustomPaginationProps> = ({
           minWidth: "120px",
           borderRadius: "50px",
           textTransform: "none",
-          width: isMobile ? "100%" : "auto", // Full-width on mobile
-          marginRight: "8px", // Space between buttons
+          width: { xs: "100%", sm: "auto" },
+          marginRight: "8px",
         }}
       >
         Previous
@@ -58,7 +58,7 @@ const PaginationFilter: React.FC<CustomPaginationProps> = ({
           minWidth: "120px",
           borderRadius: "50px",
           textTransform: "none",
-          width: isMobile ? "100%" : "auto", // Full-width on mobile
+          width: { xs: "100%", sm: "auto" },
         }}
       >
         Next
