@@ -25,23 +25,6 @@ services:
     networks:
       - my_network  
 
-  frontend:
-    build:
-      context: ./frontend
-      dockerfile: Dockerfile.dev  # Create a Dockerfile for the frontend
-    ports:
-      - "5173:5173"  # Expose the frontend port
-    volumes:
-      - ./frontend:/frontend  # Mount the frontend source code for hot reloading
-      - /frontend/node_modules  # Prevent node_modules from being overwritten
-    networks:
-      - my_network  
-    command: npm run dev  # Start the frontend in development mode
-    depends_on:
-      app:  
-        condition: service_started
-    environment:
-      - MODE=development
 
 networks:
   my_network:

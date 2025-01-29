@@ -19,52 +19,82 @@ func NewBooksService(googleBooksRepository *repositories.GoogleBooksRepository, 
 	}
 }
 
-func (bs *BooksService) GetBookList(pageSize int, startIndex int, searchTerm string) (*models.APIResponse, error) {
-	// Fetch the list of books from the Google Books API using the search term
-	booksResponse, err := bs.GoogleBooksRepository.Client.GetBookList(pageSize, startIndex, searchTerm)
-	if err != nil {
-		return nil, err // Handle error from GoogleBooksClient
+func (bs *BooksService) GetBookList(pageSize int, startIndex int, searchTerm string, isNotMature bool) (*models.APIResponse, error) {
+	// Enforce max pageSize limit of 40
+	if pageSize > 40 {
+		pageSize = 40
 	}
 
-	// Calculate total pages
-	totalPages := (booksResponse.TotalItems + pageSize - 1) / pageSize // Ceiling division
-
-	// Create a new slice to hold books with revision numbers
 	var updatedBooks []models.Book
-	var mu sync.Mutex // Mutex to safely append to the slice
+	var mu sync.Mutex
 	var wg sync.WaitGroup
 
-	for _, book := range booksResponse.Books {
-		wg.Add(1) // Increment the wait group counter
-		go func(b models.Book) {
-			defer wg.Done() // Decrement the counter when the goroutine completes
+	// Initialize a variable to keep track of the number of collected books
+	booksCollected := 0
+	currentStartIndex := startIndex
 
-			// Check if the book has an ISBN
-			if b.ISBN != "" {
-				// Get the revision number for the book
-				revisionNumber, err := bs.OpenLibraryRepository.Client.GetRevisionNumber(b.ISBN)
-				if err != nil {
-					// Log the error
-					fmt.Printf("Error fetching revision number for ISBN %s: %v\n", b.ISBN, err)
-				} else {
-					// Set the revision number for the book if successfully fetched
-					b.RevisionNumber = revisionNumber
-				}
+	// Fetch books until we collect enough or exhaust the results
+	for booksCollected < pageSize {
+		// Fetch books from Google Books API
+		booksResponse, err := bs.GoogleBooksRepository.Client.GetBookList(pageSize, currentStartIndex, searchTerm)
+		if err != nil {
+			return nil, err
+		}
+
+		// Loop through the fetched books
+		for _, book := range booksResponse.Books {
+			// Apply isNotMature filter
+			if isNotMature && book.MaturityRating != "NOT_MATURE" {
+				continue
 			}
 
-			// Lock the mutex to append the book safely to the slice
-			mu.Lock()
-			updatedBooks = append(updatedBooks, b)
-			mu.Unlock()
-		}(book) // Pass the current book as an argument to the goroutine
+			wg.Add(1)
+			go func(b models.Book) {
+				defer wg.Done()
+
+				// Fetch revision number if ISBN is present
+				if b.ISBN != "" {
+					revisionNumber, err := bs.OpenLibraryRepository.Client.GetRevisionNumber(b.ISBN)
+					if err != nil {
+						fmt.Printf("Error fetching revision number for ISBN %s: %v\n", b.ISBN, err)
+					} else {
+						b.RevisionNumber = revisionNumber
+					}
+				}
+
+				// Append book safely with mutex
+				mu.Lock()
+				if len(updatedBooks) < pageSize { // Ensure we return only the required number of books
+					updatedBooks = append(updatedBooks, b)
+				}
+				mu.Unlock()
+			}(book)
+
+			// Increment books collected counter
+			booksCollected++
+
+			// Stop if we've collected enough books
+			if booksCollected >= pageSize {
+				break
+			}
+		}
+
+		// Break the outer loop if we have enough books
+		if booksCollected >= pageSize {
+			break
+		}
+
+		// Increment the start index for the next batch
+		currentStartIndex += pageSize
 	}
 
-	wg.Wait() // Wait for all goroutines to finish
+	wg.Wait()
 
-	// Create the response object with pagination information
+	totalPages := (booksCollected + pageSize - 1) / pageSize
+
 	return &models.APIResponse{
 		TotalPages:  totalPages,
-		CurrentPage: (startIndex / pageSize) + 1, // Calculate current page (1-based index)
+		CurrentPage: (startIndex / pageSize) + 1,
 		PageSize:    pageSize,
 		Books:       updatedBooks,
 	}, nil
