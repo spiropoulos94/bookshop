@@ -13,33 +13,17 @@ interface CartDrawerContentProps {
 
 const CartDrawerContent: React.FC<CartDrawerContentProps> = ({ items }) => {
   const theme = useTheme(); // Get theme from context
+  const { totalPrice, totalQuantity } = useCart();
 
-  const { totalPrice } = useCart();
-
-  // Calculate total price
-
-  return (
-    <List
-      sx={{
-        width: 250,
-        backgroundColor: theme.palette.background.default,
-        color: theme.palette.primary.main,
-      }}
-    >
-      {/* Header for Total Price */}
-      <Typography variant="h6" sx={{ padding: 2 }}>
-        Total: ${totalPrice.toFixed(2)}
-      </Typography>
-      <Divider
+  if (totalQuantity === 0) {
+    return (
+      <List
         sx={{
-          backgroundColor: theme.palette.primary.main,
-          mb: 1,
+          width: 250,
+          backgroundColor: theme.palette.background.default,
+          color: theme.palette.primary.main,
         }}
-      />
-
-      {items.length > 0 ? (
-        items.map((item) => <CartItem key={item.id} item={item} />)
-      ) : (
+      >
         <Box p={2} width={"100%"} textAlign={"center"}>
           <Typography
             component={"div"}
@@ -49,7 +33,30 @@ const CartDrawerContent: React.FC<CartDrawerContentProps> = ({ items }) => {
             Your cart is empty
           </Typography>
         </Box>
-      )}
+      </List>
+    );
+  }
+
+  return (
+    <List
+      sx={{
+        width: 250,
+        backgroundColor: theme.palette.background.default,
+        color: theme.palette.primary.main,
+      }}
+    >
+      <Typography variant="h6" sx={{ padding: 2 }}>
+        Total: ${totalPrice.toFixed(2)}
+      </Typography>
+      <Divider
+        sx={{
+          backgroundColor: theme.palette.primary.main,
+          mb: 1,
+        }}
+      />
+      {items.map((item) => (
+        <CartItem key={item.id} item={item} />
+      ))}
     </List>
   );
 };

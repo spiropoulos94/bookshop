@@ -7,6 +7,7 @@ import {
 import { PlaceholderImage } from "../../Books/BookItem";
 import AddIcon from "@mui/icons-material/Add";
 import RemoveIcon from "@mui/icons-material/Remove";
+import DeleteIcon from "@mui/icons-material/Delete";
 
 interface CartItemProps {
   item: CartItemType;
@@ -14,7 +15,7 @@ interface CartItemProps {
 
 const CartItem: React.FC<CartItemProps> = ({ item }) => {
   const theme = useTheme(); // Get theme from context
-  const { incrementQuantity, decrementQuantity } = useCart();
+  const { incrementQuantity, decrementQuantity, deleteFromCart } = useCart();
 
   // Calculate the total price
   const totalPrice = item.price * item.quantity;
@@ -25,13 +26,30 @@ const CartItem: React.FC<CartItemProps> = ({ item }) => {
         color: theme.palette.primary.main,
         mb: 2,
         display: "flex",
-        alignItems: "flex-start",
+        alignItems: "center",
+        justifyContent: "space-between",
         cursor: "default",
+        overflow: "hidden",
         "&:hover": {
           opacity: 0.9,
         },
       }}
     >
+      {/* Remove Item Button */}
+      <IconButton
+        size="small"
+        onClick={() => deleteFromCart(item.id)}
+        sx={{
+          p: 0,
+          color: theme.palette.error.main,
+          "&:hover": {
+            backgroundColor: "transparent",
+          },
+        }}
+      >
+        <DeleteIcon fontSize="small" />
+      </IconButton>
+
       {/* Thumbnail */}
       <Box
         flexShrink={0}
@@ -40,7 +58,7 @@ const CartItem: React.FC<CartItemProps> = ({ item }) => {
         overflow="hidden"
         borderRadius={1}
         border={`1px solid ${theme.palette.divider}`}
-        mr={2}
+        mx={2}
       >
         {item.thumbnail ? (
           <img
@@ -56,12 +74,15 @@ const CartItem: React.FC<CartItemProps> = ({ item }) => {
       </Box>
 
       {/* Title and Price Information */}
-      <Box flex={1}>
+      <Box flex={1} overflow="hidden">
         {/* Title */}
         <Typography
           variant="body2"
           color={theme.palette.primary.main}
-          sx={{ mb: 0.5 }}
+          sx={{
+            mb: 0.5,
+            textWrap: "wrap",
+          }}
         >
           {item.title}
         </Typography>

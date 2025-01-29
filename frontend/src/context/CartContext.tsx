@@ -1,22 +1,21 @@
 "use client";
 
-import { createContext, useContext, useState } from "react";
+import { createContext, useContext, useState, useEffect } from "react";
 import { Book } from "../api";
 
-// Define the CartItem interface that extends Book.
 export interface CartItem extends Book {
-  quantity: number; // New property to manage item quantity in the cart
+  quantity: number;
 }
 
 // Define the CartContext data type.
 export type CartContextData = {
   cartItems: CartItem[];
-  totalPrice: number; // Add totalPrice to the context data
-  totalQuantity: number; // Add totalQuantity to the context data
+  totalPrice: number;
+  totalQuantity: number;
   addToCart: (book: Book) => void;
   deleteFromCart: (bookId: string) => void;
-  incrementQuantity: (bookId: string) => void; // New method
-  decrementQuantity: (bookId: string) => void; // New method
+  incrementQuantity: (bookId: string) => void;
+  decrementQuantity: (bookId: string) => void;
 };
 
 // Create the CartContext.
@@ -33,24 +32,38 @@ export function useCart() {
   return context;
 }
 
+// Key for localStorage
+const CART_STORAGE_KEY = "cartItems";
+
 // Create the CartContext provider component.
 export default function CartContextProvider({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const [cartItems, setCartItems] = useState<CartItem[]>([]);
+  const [cartItems, setCartItems] = useState<CartItem[]>(() => {
+    if (typeof window !== "undefined") {
+      const storedCart = localStorage.getItem(CART_STORAGE_KEY);
+      return storedCart ? JSON.parse(storedCart) : [];
+    }
+    return [];
+  });
+
+  // Persist cart items to localStorage when cartItems change
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(cartItems));
+    }
+  }, [cartItems]);
 
   const addToCart = (book: Book) => {
     setCartItems((prevItems) => {
       const existingItem = prevItems.find((item) => item.id === book.id);
       if (existingItem) {
-        // If the item already exists in the cart, increase its quantity
         return prevItems.map((item) =>
           item.id === book.id ? { ...item, quantity: item.quantity + 1 } : item
         );
       }
-      // Otherwise, add it to the cart with a quantity of 1
       return [...prevItems, { ...book, quantity: 1 }];
     });
   };
@@ -59,19 +72,6 @@ export default function CartContextProvider({
     setCartItems((prevItems) => prevItems.filter((item) => item.id !== bookId));
   };
 
-  const calculateTotalPrice = () => {
-    return cartItems.reduce(
-      (total, item) => total + item.price * item.quantity,
-      0
-    );
-  };
-
-  // Calculate the total quantity of items in the cart
-  const calculateTotalQuantity = () => {
-    return cartItems.reduce((total, item) => total + item.quantity, 0);
-  };
-
-  // Increment the quantity of a specified book in the cart
   const incrementQuantity = (bookId: string) => {
     setCartItems((prevItems) =>
       prevItems.map((item) =>
@@ -80,35 +80,37 @@ export default function CartContextProvider({
     );
   };
 
-  // Decrement the quantity of a specified book in the cart
   const decrementQuantity = (bookId: string) => {
-    setCartItems((prevItems) => {
-      const itemToUpdate = prevItems.find((item) => item.id === bookId);
-      if (itemToUpdate) {
-        if (itemToUpdate.quantity > 1) {
-          // If quantity is greater than 1, decrease it
-          return prevItems.map((item) =>
-            item.id === bookId ? { ...item, quantity: item.quantity - 1 } : item
-          );
+    setCartItems((prevItems) =>
+      prevItems.reduce((acc, item) => {
+        if (item.id === bookId) {
+          if (item.quantity > 1) {
+            acc.push({ ...item, quantity: item.quantity - 1 });
+          }
         } else {
-          // If quantity is 1, remove the item from the cart
-          return prevItems.filter((item) => item.id !== bookId);
+          acc.push(item);
         }
-      }
-      return prevItems; // Return unchanged if item not found
-    });
+        return acc;
+      }, [] as CartItem[])
+    );
   };
 
-  // Calculate the total price once and store it in a variable
-  const totalPrice = calculateTotalPrice();
+  // Calculate total price
+  const totalPrice = cartItems.reduce(
+    (total, item) => total + item.price * item.quantity,
+    0
+  );
 
-  // Calculate the total quantity once and store it in a variable
-  const totalQuantity = calculateTotalQuantity();
+  // Calculate total quantity
+  const totalQuantity = cartItems.reduce(
+    (total, item) => total + item.quantity,
+    0
+  );
 
   const value: CartContextData = {
     cartItems,
-    totalPrice, // Include totalPrice in the context value
-    totalQuantity, // Include totalQuantity in the context value
+    totalPrice,
+    totalQuantity,
     addToCart,
     deleteFromCart,
     incrementQuantity,
