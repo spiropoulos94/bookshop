@@ -16,6 +16,7 @@ export type CartContextData = {
   deleteFromCart: (bookId: string) => void;
   incrementQuantity: (bookId: string) => void;
   decrementQuantity: (bookId: string) => void;
+  setQuantity: (bookId: string, quantity: number) => void;
 };
 
 // Create the CartContext.
@@ -80,6 +81,14 @@ export default function CartContextProvider({
     );
   };
 
+  const setQuantity = (bookId: string, quantity: number) => {
+    setCartItems((prevItems) =>
+      prevItems.map((item) =>
+        item.id === bookId ? { ...item, quantity } : item
+      )
+    );
+  };
+
   const decrementQuantity = (bookId: string) => {
     setCartItems((prevItems) =>
       prevItems.reduce((acc, item) => {
@@ -115,6 +124,7 @@ export default function CartContextProvider({
     deleteFromCart,
     incrementQuantity,
     decrementQuantity,
+    setQuantity,
   };
 
   return <CartContext.Provider value={value}>{children}</CartContext.Provider>;

@@ -1,5 +1,12 @@
 import React, { useState } from "react";
-import { Box, IconButton, MenuItem, Typography, useTheme } from "@mui/material";
+import {
+  Box,
+  IconButton,
+  MenuItem,
+  TextField,
+  Typography,
+  useTheme,
+} from "@mui/material";
 import {
   CartItem as CartItemType,
   useCart,
@@ -14,16 +21,20 @@ interface CartItemProps {
 }
 
 const CartItem: React.FC<CartItemProps> = ({ item }) => {
-  const theme = useTheme(); // Get theme from context
-  const { incrementQuantity, decrementQuantity, deleteFromCart } = useCart();
+  const theme = useTheme();
+  const {
+    incrementQuantity,
+    decrementQuantity,
+    setQuantity: updateQuantity,
+    deleteFromCart,
+  } = useCart();
   const [error, setError] = useState(false);
-
-  // Calculate the total price
-  const totalPrice = item.price * item.quantity;
+  const [inputValue, setInputValue] = useState(String(item.quantity));
 
   const handleIncrement = () => {
     if (item.quantity < 100) {
       incrementQuantity(item.id);
+      setInputValue(String(item.quantity + 1));
       setError(false);
     } else {
       setError(true);
@@ -31,7 +42,30 @@ const CartItem: React.FC<CartItemProps> = ({ item }) => {
   };
 
   const handleDecrement = () => {
-    decrementQuantity(item.id);
+    if (item.quantity > 1) {
+      decrementQuantity(item.id);
+      setInputValue(String(item.quantity - 1));
+      setError(false);
+    }
+  };
+
+  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const value = event.target.value;
+    if (/^\d*$/.test(value)) {
+      setInputValue(value);
+    }
+  };
+
+  const handleBlur = () => {
+    let quantity = parseInt(inputValue, 10);
+    if (isNaN(quantity) || quantity < 1) {
+      quantity = 1;
+    } else if (quantity > 100) {
+      quantity = 100;
+    }
+    updateQuantity(item.id, quantity);
+    setInputValue(String(quantity));
+    setError(quantity > 100);
   };
 
   return (
@@ -44,27 +78,21 @@ const CartItem: React.FC<CartItemProps> = ({ item }) => {
         justifyContent: "space-between",
         cursor: "default",
         overflow: "hidden",
-        "&:hover": {
-          opacity: 0.9,
-        },
+        "&:hover": { opacity: 0.9 },
       }}
     >
-      {/* Remove Item Button */}
       <IconButton
         size="small"
         onClick={() => deleteFromCart(item.id)}
         sx={{
           p: 0,
           color: theme.palette.error.main,
-          "&:hover": {
-            backgroundColor: "transparent",
-          },
+          "&:hover": { backgroundColor: "transparent" },
         }}
       >
         <DeleteIcon fontSize="small" />
       </IconButton>
 
-      {/* Thumbnail */}
       <Box
         flexShrink={0}
         width={40}
@@ -87,9 +115,7 @@ const CartItem: React.FC<CartItemProps> = ({ item }) => {
         )}
       </Box>
 
-      {/* Title and Price Information */}
       <Box flex={1}>
-        {/* Title */}
         <Typography
           variant="body2"
           color={theme.palette.primary.main}
@@ -98,45 +124,42 @@ const CartItem: React.FC<CartItemProps> = ({ item }) => {
           {item.title}
         </Typography>
 
-        {/* Price, Quantity, and Total */}
         <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
-          ${item.price.toFixed(2)} x {item.quantity} = ${totalPrice.toFixed(2)}
+          ${item.price.toFixed(2)} x {item.quantity} = $
+          {(item.price * item.quantity).toFixed(2)}
         </Typography>
 
-        {/* Quantity Controls */}
         <Box display="flex" alignItems="center">
           <IconButton
             size="small"
             onClick={handleDecrement}
-            sx={{
-              p: 0,
-              color: theme.palette.primary.main,
-              "&:hover": {
-                backgroundColor: "transparent",
-              },
-            }}
+            sx={{ p: 0, color: theme.palette.primary.main }}
           >
             <RemoveIcon fontSize="small" />
           </IconButton>
 
-          <Typography
-            variant="body2"
-            color={error ? theme.palette.error.main : "text.secondary"}
+          <TextField
+            value={inputValue}
+            onChange={handleInputChange}
+            onBlur={handleBlur}
+            variant="outlined"
+            size="small"
+            inputProps={{
+              style: {
+                textAlign: "center",
+                width: 30,
+                height: 10,
+                color: theme.palette.primary.main,
+              },
+              maxLength: 3,
+            }}
             sx={{ mx: 1 }}
-          >
-            {item.quantity}
-          </Typography>
+          />
 
           <IconButton
             size="small"
             onClick={handleIncrement}
-            sx={{
-              p: 0,
-              color: theme.palette.primary.main,
-              "&:hover": {
-                backgroundColor: "transparent",
-              },
-            }}
+            sx={{ p: 0, color: theme.palette.primary.main }}
           >
             <AddIcon fontSize="small" />
           </IconButton>
