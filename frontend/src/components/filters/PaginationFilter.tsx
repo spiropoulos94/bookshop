@@ -12,9 +12,10 @@ import { SelectChangeEvent } from "@mui/material/Select"; // Import SelectChange
 
 interface CustomPaginationProps {
   currentPage: number;
-  pageSize: number; // Add pageSize prop
+  pageSize: number;
   onPageChange: (page: number) => void;
-  onPageSizeChange: (size: number) => void; // New prop for page size change
+  onPageSizeChange: (size: number) => void;
+  isLoading?: boolean;
 }
 
 const PaginationFilter: React.FC<CustomPaginationProps> = ({
@@ -22,6 +23,7 @@ const PaginationFilter: React.FC<CustomPaginationProps> = ({
   pageSize,
   onPageChange,
   onPageSizeChange,
+  isLoading,
 }) => {
   const handlePrevious = () => {
     if (currentPage > 1) {
@@ -60,7 +62,7 @@ const PaginationFilter: React.FC<CustomPaginationProps> = ({
           variant="contained"
           color="primary"
           onClick={handlePrevious}
-          disabled={currentPage === 1}
+          disabled={currentPage === 1 || isLoading}
           startIcon={<ArrowBack />}
           size="small"
           sx={{
@@ -80,6 +82,7 @@ const PaginationFilter: React.FC<CustomPaginationProps> = ({
           size="small"
           onClick={handleNext}
           startIcon={<ArrowForward />}
+          disabled={isLoading}
           sx={{
             minWidth: "120px",
             borderRadius: "50px",
@@ -91,7 +94,12 @@ const PaginationFilter: React.FC<CustomPaginationProps> = ({
         </Button>
       </Box>
       {/* Page Size Selector */}
-      <FormControl variant="outlined" sx={{ minWidth: 40 }} size="small">
+      <FormControl
+        variant="outlined"
+        sx={{ minWidth: 40 }}
+        size="small"
+        disabled={isLoading}
+      >
         <Select
           value={pageSize}
           onChange={handlePageSizeChange}

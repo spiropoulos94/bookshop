@@ -14,6 +14,7 @@ import { useState } from "react";
 interface SearchFilterProps {
   onSearch: (search: string) => void;
   defaultValue?: string;
+  isLoading?: boolean;
 }
 
 const Searchbar = styled(TextField)(() => ({
@@ -36,7 +37,11 @@ const Searchbar = styled(TextField)(() => ({
   },
 }));
 
-const SearchFilter = ({ onSearch, defaultValue = "" }: SearchFilterProps) => {
+const SearchFilter = ({
+  onSearch,
+  defaultValue = "",
+  isLoading,
+}: SearchFilterProps) => {
   const [searchValue, setSearchValue] = useState<string>(defaultValue);
   const isMobile = useMediaQuery("(max-width:600px)"); // Detect mobile screen size
 
@@ -67,6 +72,7 @@ const SearchFilter = ({ onSearch, defaultValue = "" }: SearchFilterProps) => {
     >
       <Searchbar
         size="small"
+        disabled={isLoading}
         placeholder="Search books"
         value={searchValue}
         onChange={(e) => setSearchValue(e.target.value)} // Only update state, no immediate search
