@@ -22,7 +22,7 @@ const BooksList = () => {
   const [searchQuery, setSearchQuery] = useState<string>(initialSearch);
   const [currentPage, setCurrentPage] = useState<number>(initialPage);
   const [totalPages, setTotalPages] = useState<number>(0);
-  const pageSize = 30;
+  const pageSize = 10;
 
   const { addToCart, cartItems } = useCart();
 
