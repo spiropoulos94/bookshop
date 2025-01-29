@@ -38,7 +38,13 @@ func (gbc *GoogleBooksClient) GetBookList(pageSize int, startIndex int, searchTe
 
 	// Check if the response status is OK
 	if resp.StatusCode != http.StatusOK {
-		return nil, fmt.Errorf("error: received status code %d", resp.StatusCode)
+		// Read the response body to log it
+		body, err := io.ReadAll(resp.Body)
+		if err != nil {
+			return nil, fmt.Errorf("error: received status code %d but failed to read response body: %v", resp.StatusCode, err)
+		}
+
+		return nil, fmt.Errorf("error: received status code %d, response: %s", resp.StatusCode, string(body))
 	}
 
 	// Read the response body
