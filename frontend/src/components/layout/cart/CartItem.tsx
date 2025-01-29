@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { Box, IconButton, MenuItem, Typography, useTheme } from "@mui/material";
 import {
   CartItem as CartItemType,
@@ -15,10 +15,29 @@ interface CartItemProps {
 
 const CartItem: React.FC<CartItemProps> = ({ item }) => {
   const theme = useTheme(); // Get theme from context
-  const { incrementQuantity, decrementQuantity, deleteFromCart } = useCart();
+  const { incrementQuantity, decrementQuantity, removeItem } = useCart();
+  const [error, setError] = useState(false);
 
   // Calculate the total price
   const totalPrice = item.price * item.quantity;
+
+  const handleIncrement = () => {
+    if (item.quantity < 100) {
+      incrementQuantity(item.id);
+      setError(false);
+    } else {
+      setError(true);
+    }
+  };
+
+  const handleDecrement = () => {
+    if (item.quantity > 1) {
+      decrementQuantity(item.id);
+      setError(false);
+    } else {
+      setError(true);
+    }
+  };
 
   return (
     <MenuItem
@@ -38,7 +57,7 @@ const CartItem: React.FC<CartItemProps> = ({ item }) => {
       {/* Remove Item Button */}
       <IconButton
         size="small"
-        onClick={() => deleteFromCart(item.id)}
+        onClick={() => removeItem(item.id)}
         sx={{
           p: 0,
           color: theme.palette.error.main,
@@ -74,15 +93,12 @@ const CartItem: React.FC<CartItemProps> = ({ item }) => {
       </Box>
 
       {/* Title and Price Information */}
-      <Box flex={1} overflow="hidden">
+      <Box flex={1}>
         {/* Title */}
         <Typography
           variant="body2"
           color={theme.palette.primary.main}
-          sx={{
-            mb: 0.5,
-            textWrap: "wrap",
-          }}
+          sx={{ mb: 0.5 }}
         >
           {item.title}
         </Typography>
@@ -96,7 +112,7 @@ const CartItem: React.FC<CartItemProps> = ({ item }) => {
         <Box display="flex" alignItems="center">
           <IconButton
             size="small"
-            onClick={() => decrementQuantity(item.id)}
+            onClick={handleDecrement}
             sx={{
               p: 0,
               color: theme.palette.primary.main,
@@ -108,13 +124,17 @@ const CartItem: React.FC<CartItemProps> = ({ item }) => {
             <RemoveIcon fontSize="small" />
           </IconButton>
 
-          <Typography variant="body2" color="text.secondary" sx={{ mx: 1 }}>
+          <Typography
+            variant="body2"
+            color={error ? theme.palette.error.main : "text.secondary"}
+            sx={{ mx: 1 }}
+          >
             {item.quantity}
           </Typography>
 
           <IconButton
             size="small"
-            onClick={() => incrementQuantity(item.id)}
+            onClick={handleIncrement}
             sx={{
               p: 0,
               color: theme.palette.primary.main,
@@ -126,6 +146,11 @@ const CartItem: React.FC<CartItemProps> = ({ item }) => {
             <AddIcon fontSize="small" />
           </IconButton>
         </Box>
+        {error && (
+          <Typography variant="body2" color={theme.palette.error.main}>
+            Sorry! Number invalid
+          </Typography>
+        )}
       </Box>
     </MenuItem>
   );
