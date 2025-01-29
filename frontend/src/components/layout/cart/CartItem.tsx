@@ -98,7 +98,7 @@ const CartItem: React.FC<CartItemProps> = ({ item }) => {
         <Typography
           variant="body2"
           color={theme.palette.primary.main}
-          sx={{ mb: 0.5 }}
+          sx={{ mb: 0.5, textWrap: "wrap" }}
         >
           {item.title}
         </Typography>
