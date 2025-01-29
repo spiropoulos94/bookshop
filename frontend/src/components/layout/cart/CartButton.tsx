@@ -2,15 +2,18 @@ import React, { useState } from "react";
 import { Badge, IconButton, Drawer, useTheme } from "@mui/material";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import CartDrawerContent from "./CartDrawerContent";
+import {
+  CartItem as CartItemType,
+  useCart,
+} from "../../../context/CartContext";
 
 interface CartButtonProps {
-  items: { id: number; name: string; price: number }[];
-  onItemClick?: (item: { id: number; name: string; price: number }) => void;
+  items: CartItemType[];
 }
 
-const CartButton: React.FC<CartButtonProps> = ({ items, onItemClick }) => {
+const CartButton: React.FC<CartButtonProps> = ({ items }) => {
   const [drawerOpen, setDrawerOpen] = useState(false);
-  const theme = useTheme(); // Get theme from context
+  const theme = useTheme();
 
   const toggleDrawer = (open: boolean) => () => {
     setDrawerOpen(open);
@@ -50,10 +53,7 @@ const CartButton: React.FC<CartButtonProps> = ({ items, onItemClick }) => {
           },
         }}
       >
-        <CartDrawerContent
-          items={items}
-          onItemClick={(item) => onItemClick && onItemClick(item)}
-        />
+        <CartDrawerContent items={items} />
       </Drawer>
     </>
   );

@@ -1,37 +1,111 @@
 import React from "react";
-import { MenuItem, Typography, useTheme } from "@mui/material";
+import { Box, IconButton, MenuItem, Typography, useTheme } from "@mui/material";
+import {
+  CartItem as CartItemType,
+  useCart,
+} from "../../../context/CartContext";
+import { PlaceholderImage } from "../../Books/BookItem";
+import AddIcon from "@mui/icons-material/Add";
+import RemoveIcon from "@mui/icons-material/Remove";
 
 interface CartItemProps {
-  item: { id: number; name: string; price: number };
-  onClick: (item: { id: number; name: string; price: number }) => void;
+  item: CartItemType;
 }
 
-const CartItem: React.FC<CartItemProps> = ({ item, onClick }) => {
+const CartItem: React.FC<CartItemProps> = ({ item }) => {
   const theme = useTheme(); // Get theme from context
+  const { incrementQuantity, decrementQuantity } = useCart();
+
+  // Calculate the total price
+  const totalPrice = item.price * item.quantity;
 
   return (
     <MenuItem
-      onClick={() => onClick(item)}
+      onClick={() => console.log("cart item clicked", item)}
       sx={{
         color: theme.palette.primary.main,
         mb: 2,
+        display: "flex",
+        alignItems: "flex-start",
         "&:hover": {
           opacity: 0.9,
-          "& .MuiTypography-root": {
-            textDecoration: "underline", // Apply underline on Typography on MenuItem hover
-          },
         },
       }}
     >
-      <Typography
-        variant="body2"
-        color={theme.palette.primary.main}
-        sx={{
-          transition: "text-decoration 0.3s", // Smooth transition for the underline
-        }}
+      {/* Thumbnail */}
+      <Box
+        flexShrink={0}
+        width={40}
+        height={60}
+        overflow="hidden"
+        borderRadius={1}
+        border={`1px solid ${theme.palette.divider}`}
+        mr={2}
       >
-        {item.name} - ${item.price.toFixed(2)}
-      </Typography>
+        {item.thumbnail ? (
+          <img
+            src={item.thumbnail}
+            alt={item.title}
+            width={40}
+            height={60}
+            style={{ objectFit: "cover" }}
+          />
+        ) : (
+          <PlaceholderImage />
+        )}
+      </Box>
+
+      {/* Title and Price Information */}
+      <Box flex={1}>
+        {/* Title */}
+        <Typography
+          variant="body2"
+          color={theme.palette.primary.main}
+          sx={{ mb: 0.5 }}
+        >
+          {item.title}
+        </Typography>
+
+        {/* Price, Quantity, and Total */}
+        <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
+          ${item.price.toFixed(2)} x {item.quantity} = ${totalPrice.toFixed(2)}
+        </Typography>
+
+        {/* Quantity Controls */}
+        <Box display="flex" alignItems="center">
+          <IconButton
+            size="small"
+            onClick={() => decrementQuantity(item.id)}
+            sx={{
+              p: 0,
+              color: theme.palette.primary.main,
+              "&:hover": {
+                backgroundColor: "transparent",
+              },
+            }}
+          >
+            <RemoveIcon fontSize="small" />
+          </IconButton>
+
+          <Typography variant="body2" color="text.secondary" sx={{ mx: 1 }}>
+            {item.quantity}
+          </Typography>
+
+          <IconButton
+            size="small"
+            onClick={() => incrementQuantity(item.id)}
+            sx={{
+              p: 0,
+              color: theme.palette.primary.main,
+              "&:hover": {
+                backgroundColor: "transparent",
+              },
+            }}
+          >
+            <AddIcon fontSize="small" />
+          </IconButton>
+        </Box>
+      </Box>
     </MenuItem>
   );
 };

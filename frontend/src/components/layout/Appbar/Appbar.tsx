@@ -7,10 +7,10 @@ import {
 } from "@mui/material";
 import MenuBookIcon from "@mui/icons-material/MenuBook";
 import CartButton from "../cart/CartButton";
+import { useCart } from "../../../context/CartContext";
 
-interface AppbarProps {}
-
-const Appbar = ({}: AppbarProps) => {
+const Appbar = () => {
+  const { cartItems } = useCart();
   return (
     <Box>
       <MUIAppbar position="static">
@@ -35,21 +35,7 @@ const Appbar = ({}: AppbarProps) => {
             ScyllaDB Bookshop
           </Typography>
           {/* Cart Button Here */}
-          <CartButton
-            onItemClick={(item) => console.log(item)}
-            items={[
-              {
-                id: 1,
-                name: "Scylla Essentials",
-                price: 29.99,
-              },
-              {
-                id: 2,
-                name: "Scylla Cookbook",
-                price: 39.99,
-              },
-            ]}
-          />
+          <CartButton items={cartItems} />
         </Toolbar>
       </MUIAppbar>
     </Box>

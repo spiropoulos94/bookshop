@@ -8,7 +8,7 @@ import ExpandLessIcon from "@mui/icons-material/ExpandLess";
 import { Book } from "../../api";
 
 // Placeholder SVG for books without images
-const PlaceholderImage = () => (
+export const PlaceholderImage = () => (
   <svg
     width="100"
     height="150"

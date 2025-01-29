@@ -41,6 +41,7 @@ const SearchFilter = ({ onSearch, defaultValue = "" }: SearchFilterProps) => {
   const isMobile = useMediaQuery("(max-width:600px)"); // Detect mobile screen size
 
   const handleSearchClick = () => {
+    if (!searchValue) return; // Don't search if the input is empty
     onSearch(searchValue); // Trigger the search action
   };
 

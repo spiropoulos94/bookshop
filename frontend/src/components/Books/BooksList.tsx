@@ -6,6 +6,7 @@ import BookItem from "./BookItem";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import SearchFilter from "../filters/SearchFilter";
 import PaginationFilter from "../filters/PaginationFilter";
+import { useCart } from "../../context/CartContext";
 
 let debounceTimeout: NodeJS.Timeout;
 
@@ -22,6 +23,8 @@ const BooksList = () => {
   const [currentPage, setCurrentPage] = useState<number>(initialPage);
   const [totalPages, setTotalPages] = useState<number>(0);
   const pageSize = 30;
+
+  const { addToCart } = useCart();
 
   const updateUrl = (query: string, page: number) => {
     const newParams = new URLSearchParams();
@@ -106,8 +109,8 @@ const BooksList = () => {
     return <div>Error: {error}</div>;
   }
 
-  const addToCart = (book: Book) => {
-    console.log("Adding to cart", book);
+  const handleAddToCart = (book: Book) => {
+    addToCart(book);
   };
 
   return (
@@ -124,7 +127,11 @@ const BooksList = () => {
         <Stack>
           {books.length > 0 ? (
             books.map((book) => (
-              <BookItem key={book.id} book={book} onAddToCart={addToCart} />
+              <BookItem
+                key={book.id}
+                book={book}
+                onAddToCart={handleAddToCart}
+              />
             ))
           ) : (
             <Typography variant="h6">
