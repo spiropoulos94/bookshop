@@ -113,13 +113,15 @@ const BookItem = ({ book, onAddToCart }: BookItemProps) => {
         >
           {book.description}
         </Typography>
-        <IconButton
-          size="small"
-          onClick={handleToggleExpand}
-          sx={{ alignSelf: "center" }}
-        >
-          {expanded ? <ExpandLessIcon /> : <ExpandMoreIcon />}
-        </IconButton>
+        {book.description && (
+          <IconButton
+            size="small"
+            onClick={handleToggleExpand}
+            sx={{ alignSelf: "center" }}
+          >
+            {expanded ? <ExpandLessIcon /> : <ExpandMoreIcon />}
+          </IconButton>
+        )}
         {book.pageCount > 0 && (
           <Box display="flex" alignItems="center" color="text.secondary" mb={1}>
             <LibraryBooksOutlinedIcon fontSize="small" sx={{ mr: 0.5 }} />
