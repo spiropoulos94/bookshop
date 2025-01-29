@@ -73,6 +73,7 @@ const CartItem: React.FC<CartItemProps> = ({ item }) => {
       sx={{
         color: theme.palette.primary.main,
         mb: 2,
+        paddingX: "6px",
         display: "flex",
         alignItems: "center",
         justifyContent: "space-between",
