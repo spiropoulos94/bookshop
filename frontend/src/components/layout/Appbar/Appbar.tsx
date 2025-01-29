@@ -7,7 +7,6 @@ import {
 } from "@mui/material";
 import MenuBookIcon from "@mui/icons-material/MenuBook";
 import CartButton from "../cart/CartButton";
-import { useCart } from "../../../context/CartContext";
 
 const Appbar = () => {
   return (

@@ -1,11 +1,8 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { Badge, IconButton, Drawer, useTheme } from "@mui/material";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import CartDrawerContent from "./CartDrawerContent";
-import {
-  CartItem as CartItemType,
-  useCart,
-} from "../../../context/CartContext";
+import { useCart } from "../../../context/CartContext";
 
 const CartButton = () => {
   const [drawerOpen, setDrawerOpen] = useState(false);

@@ -97,10 +97,7 @@ const BooksList = () => {
     }, 300);
   };
 
-  const handlePageChange = (
-    event: React.ChangeEvent<unknown>,
-    value: number
-  ) => {
+  const handlePageChange = (value: number) => {
     setCurrentPage(value);
     updateUrl(searchQuery, value); // Update URL with new page value
   };
@@ -122,7 +119,7 @@ const BooksList = () => {
       <PaginationFilter
         count={totalPages}
         page={currentPage}
-        onChange={handlePageChange}
+        onChange={() => handlePageChange}
       />
       {loading ? (
         <Loading />
