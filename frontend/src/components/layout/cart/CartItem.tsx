@@ -21,7 +21,6 @@ const CartItem: React.FC<CartItemProps> = ({ item }) => {
 
   return (
     <MenuItem
-      onClick={() => console.log("cart item clicked", item)}
       sx={{
         color: theme.palette.primary.main,
         mb: 2,
