@@ -25,15 +25,17 @@ export interface GetBooksResponse {
 export const GetBooks = async (
   pageSize: number = 10,
   page: number = 1,
-  searchTerm: string = "nosql",
+  searchTerm?: string, // Make searchTerm optional
   isNotMature: boolean = false
 ): Promise<GetBooksResponse> => {
   try {
     const url = new URL(`${BACKEND_API_URL}/api/books`);
-    url.searchParams.append("search", searchTerm);
+
     url.searchParams.append("pageSize", pageSize.toString());
     url.searchParams.append("page", page.toString());
-    url.searchParams.append("isNotMature", isNotMature.toString());
+
+    if (searchTerm) url.searchParams.append("search", searchTerm); // Only add if searchTerm has a value
+    if (isNotMature) url.searchParams.append("isNotMature", "true"); // Only add if true
 
     const response = await fetch(url.toString());
 
