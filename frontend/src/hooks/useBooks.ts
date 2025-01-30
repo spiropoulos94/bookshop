@@ -4,7 +4,8 @@ import { Book, GetBooks } from "../api";
 const useBooks = (
   initialSearch: string,
   initialPage: number,
-  initialPageSize: number
+  initialPageSize: number,
+  initialIsNotMature: boolean
 ) => {
   const [books, setBooks] = useState<Book[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
@@ -13,56 +14,66 @@ const useBooks = (
   const [currentPage, setCurrentPage] = useState<number>(initialPage);
   const [pageSize, setPageSize] = useState<number>(initialPageSize);
   const [totalPages, setTotalPages] = useState<number>(0);
+  const [isNotMature, setIsNotMature] = useState<boolean>(initialIsNotMature);
 
-  const updateUrl = (query: string, page: number, size: number) => {
+  const updateUrl = () => {
     const newParams = new URLSearchParams();
-    if (query) newParams.set("search", query);
-    newParams.set("page", page.toString());
-    newParams.set("pageSize", size.toString());
+    if (searchQuery) newParams.set("search", searchQuery);
+    newParams.set("page", currentPage.toString());
+    newParams.set("pageSize", pageSize.toString());
+    newParams.set("isNotMature", isNotMature.toString());
 
-    const paramString = newParams.toString();
-    const newUrl = paramString
-      ? `${window.location.pathname}?${paramString}`
-      : window.location.pathname;
+    const newUrl = `${window.location.pathname}?${newParams.toString()}`;
     window.history.pushState(null, "", newUrl);
   };
 
-  const fetchBooks = async (query: string, page: number, size: number) => {
+  const fetchBooks = async () => {
     setLoading(true);
-    const { books, error, totalPages } = await GetBooks(size, page, query);
-    if (error) {
-      console.error(error);
-      setError(error);
+    setError(null);
+
+    try {
+      const { books, error, totalPages } = await GetBooks(
+        pageSize,
+        currentPage,
+        searchQuery,
+        isNotMature
+      );
+
+      if (error) throw new Error(error);
+
+      setBooks(books || []);
+      setTotalPages(totalPages || 0);
+    } catch (err) {
+      setError((err as Error).message);
+      setBooks([]); // Reset books on error
+    } finally {
       setLoading(false);
-      return;
     }
-    setBooks(books || []);
-    setTotalPages(totalPages || 0);
-    setLoading(false);
   };
 
+  // Sync URL & Fetch books on state change
   useEffect(() => {
-    updateUrl(searchQuery, currentPage, pageSize);
-    fetchBooks(searchQuery, currentPage, pageSize);
-  }, [searchQuery, currentPage, pageSize]);
-
-  const handleSearchQueryChange = (query: string) => {
-    setSearchQuery(query);
-    setCurrentPage(1);
-  };
+    updateUrl();
+    fetchBooks();
+  }, [searchQuery, currentPage, pageSize, isNotMature]);
 
   return {
     books,
     loading,
     error,
     searchQuery,
-    setSearchQuery: handleSearchQueryChange,
+    setSearchQuery: (query: string) => {
+      setSearchQuery(query);
+      setCurrentPage(1);
+    },
     currentPage,
     setCurrentPage,
     pageSize,
     setPageSize,
     totalPages,
     fetchBooks,
+    isNotMature,
+    setIsNotMature,
   };
 };
 

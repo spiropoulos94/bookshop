@@ -2,6 +2,7 @@ package services
 
 import (
 	"fmt"
+	"log"
 	"spiropoulos04/bookshop/backend/internal/models"
 	"spiropoulos04/bookshop/backend/internal/repositories"
 	"sync"
@@ -20,6 +21,9 @@ func NewBooksService(googleBooksRepository *repositories.GoogleBooksRepository, 
 }
 
 func (bs *BooksService) GetBookList(pageSize int, startIndex int, searchTerm string, isNotMature bool) (*models.APIResponse, error) {
+
+	log.Println("Fetching books from Google Books API", isNotMature)
+
 	// Enforce max pageSize limit of 40
 	if pageSize > 40 {
 		pageSize = 40
