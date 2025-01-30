@@ -39,7 +39,6 @@ func Load() Config {
 			FrontendDir: getEnv("FRONTEND_DIRECTORY", "./frontend"),
 		},
 		GoogleBooksConfig: GoogleBooksConfig{
-			APIKey:  getEnv("GOOGLE_BOOKS_API_KEY", ""),
 			BaseURL: getEnv("GOOGLE_BOOKS_API_BASE_URL", ""),
 		},
 		OpenLibraryConfig: OpenLibraryConfig{
