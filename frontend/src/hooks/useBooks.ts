@@ -21,9 +21,11 @@ const useBooks = (
     if (searchQuery) newParams.set("search", searchQuery);
     newParams.set("page", currentPage.toString());
     newParams.set("pageSize", pageSize.toString());
-    newParams.set("isNotMature", isNotMature.toString());
+    if (isNotMature) newParams.set("isNotMature", "true"); // Only add if true
 
-    const newUrl = `${window.location.pathname}?${newParams.toString()}`;
+    const newUrl = newParams.toString()
+      ? `${window.location.pathname}?${newParams.toString()}`
+      : window.location.pathname;
     window.history.pushState(null, "", newUrl);
   };
 
