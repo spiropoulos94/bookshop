@@ -21,10 +21,8 @@ func NewBooksService(googleBooksRepository *repositories.GoogleBooksRepository, 
 }
 
 func (bs *BooksService) GetBookList(pageSize int, startIndex int, searchTerm string, isNotMature bool) (*models.APIResponse, error) {
-
 	log.Println("Fetching books from Google Books API", isNotMature)
 
-	// Enforce max pageSize limit of 40
 	if pageSize > 40 {
 		pageSize = 40
 	}
@@ -33,23 +31,18 @@ func (bs *BooksService) GetBookList(pageSize int, startIndex int, searchTerm str
 	var mu sync.Mutex
 	var wg sync.WaitGroup
 
-	// Initialize a variable to keep track of the number of collected books
 	booksCollected := 0
 	currentStartIndex := startIndex
-	batchCount := 0 // Track the number of batches
+	batchCount := 0
 
-	// Fetch books until we collect enough or exhaust the results
 	for booksCollected < pageSize {
-		// Fetch books from Google Books API
 		booksResponse, err := bs.GoogleBooksRepository.Client.GetBookList(pageSize, currentStartIndex, searchTerm)
 		if err != nil {
 			return nil, err
 		}
 
-		// If no books were returned, increment batchCount and check if we should stop
 		if len(booksResponse.Books) == 0 {
 			batchCount++
-			// If 10 batches have been processed and no books were found, return empty response
 			if batchCount >= 10 {
 				log.Println("No books found after 10 batches. Returning empty response.")
 				return &models.APIResponse{
@@ -59,23 +52,23 @@ func (bs *BooksService) GetBookList(pageSize int, startIndex int, searchTerm str
 					Books:       []models.Book{},
 				}, nil
 			}
+			continue
 		} else {
-			// Reset batch count if we found books
 			batchCount = 0
 		}
 
-		// Loop through the fetched books
-		for _, book := range booksResponse.Books {
-			// Apply isNotMature filter
+		// Create a slice with the same length as the fetched books
+		bookBatch := make([]models.Book, len(booksResponse.Books))
+
+		for i, book := range booksResponse.Books {
 			if isNotMature && book.MaturityRating != "NOT_MATURE" {
 				continue
 			}
 
 			wg.Add(1)
-			go func(b models.Book) {
+			go func(index int, b models.Book) {
 				defer wg.Done()
 
-				// Fetch revision number if ISBN is present
 				if b.ISBN != "" {
 					revisionNumber, err := bs.OpenLibraryRepository.Client.GetRevisionNumber(b.ISBN)
 					if err != nil {
@@ -85,33 +78,34 @@ func (bs *BooksService) GetBookList(pageSize int, startIndex int, searchTerm str
 					}
 				}
 
-				// Append book safely with mutex
-				mu.Lock()
-				if len(updatedBooks) < pageSize { // Ensure we return only the required number of books
-					updatedBooks = append(updatedBooks, b)
-				}
-				mu.Unlock()
-			}(book)
+				// Store the book at the correct index
+				bookBatch[index] = b
+			}(i, book)
 
-			// Increment books collected counter
 			booksCollected++
 
-			// Stop if we've collected enough books
 			if booksCollected >= pageSize {
 				break
 			}
 		}
 
-		// Break the outer loop if we have enough books
+		wg.Wait()
+
+		// Append books in order to the final list
+		mu.Lock()
+		for _, book := range bookBatch {
+			if len(updatedBooks) < pageSize && book.ID != "" {
+				updatedBooks = append(updatedBooks, book)
+			}
+		}
+		mu.Unlock()
+
 		if booksCollected >= pageSize {
 			break
 		}
 
-		// Increment the start index for the next batch
 		currentStartIndex += pageSize
 	}
-
-	wg.Wait()
 
 	totalPages := (booksCollected + pageSize - 1) / pageSize
 
