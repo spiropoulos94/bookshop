@@ -36,6 +36,12 @@ func (gbc *GoogleBooksClient) GetBookList(pageSize int, startIndex int, searchTe
 	}
 	defer resp.Body.Close()
 
+	// Handle rate limit response (HTTP 429)
+	if resp.StatusCode == http.StatusTooManyRequests {
+		fmt.Println("Rate limit exceeded (429). GOOGLE API Quata reached Returning an empty response.")
+		return &models.GoogleBooksAPIClientResponse{TotalItems: 0, Books: []models.Book{}}, nil
+	}
+
 	// Check if the response status is OK
 	if resp.StatusCode != http.StatusOK {
 		// Read the response body to log it

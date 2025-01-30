@@ -51,10 +51,6 @@ const BooksList = () => {
     fetchBooks();
   }, [isNotMature]);
 
-  if (error) {
-    return <Typography color="error">Error: {error}</Typography>;
-  }
-
   const handleToggleMature = (v: boolean) => {
     setIsNotMature(v);
     console.log("Toggled mature filter:", v);
@@ -96,6 +92,8 @@ const BooksList = () => {
       ) : (
         <Typography variant="h6">No books found.</Typography>
       )}
+
+      {error && <Typography color="error">Error: {error}</Typography>}
 
       {/* Scroll to Top Button */}
       <Fab

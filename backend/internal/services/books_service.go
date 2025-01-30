@@ -36,6 +36,7 @@ func (bs *BooksService) GetBookList(pageSize int, startIndex int, searchTerm str
 	// Initialize a variable to keep track of the number of collected books
 	booksCollected := 0
 	currentStartIndex := startIndex
+	batchCount := 0 // Track the number of batches
 
 	// Fetch books until we collect enough or exhaust the results
 	for booksCollected < pageSize {
@@ -43,6 +44,24 @@ func (bs *BooksService) GetBookList(pageSize int, startIndex int, searchTerm str
 		booksResponse, err := bs.GoogleBooksRepository.Client.GetBookList(pageSize, currentStartIndex, searchTerm)
 		if err != nil {
 			return nil, err
+		}
+
+		// If no books were returned, increment batchCount and check if we should stop
+		if len(booksResponse.Books) == 0 {
+			batchCount++
+			// If 10 batches have been processed and no books were found, return empty response
+			if batchCount >= 10 {
+				log.Println("No books found after 10 batches. Returning empty response.")
+				return &models.APIResponse{
+					TotalPages:  0,
+					CurrentPage: (startIndex / pageSize) + 1,
+					PageSize:    pageSize,
+					Books:       []models.Book{},
+				}, nil
+			}
+		} else {
+			// Reset batch count if we found books
+			batchCount = 0
 		}
 
 		// Loop through the fetched books
