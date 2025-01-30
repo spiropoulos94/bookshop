@@ -5,7 +5,22 @@ The **ScyllaDB Bookshop** is a web application that utilizes the Google Books AP
 
 ## Installation & Setup
 ### Running the Application
-To start the application using **Docker**, simply run:
+
+To start the application using **Docker**, simply:
+
+Inside the ```/backend``` folder rename the 
+```sh
+env.example
+```
+
+into 
+```sh
+.env
+```
+
+
+and then run
+
 ```sh
 docker-compose up --build
 ```
