@@ -25,32 +25,28 @@ export interface GetBooksResponse {
 export const GetBooks = async (
   pageSize: number = 10,
   page: number = 1,
-  searchTerm?: string, // Make searchTerm optional
+  searchTerm: string = "nosql",
   isNotMature: boolean = false
 ): Promise<GetBooksResponse> => {
   try {
-    const url = new URL(`${BACKEND_API_URL}/api/books`);
+    let apiUrl = `${BACKEND_API_URL}/api/books?search=${encodeURIComponent(
+      searchTerm
+    )}&pageSize=${pageSize}&page=${page}`;
 
-    url.searchParams.append("pageSize", pageSize.toString());
-    url.searchParams.append("page", page.toString());
+    if (isNotMature) {
+      apiUrl += "&isNotMature=true"; // Append only if true
+    }
 
-    if (searchTerm) url.searchParams.append("search", searchTerm); // Only add if searchTerm has a value
-    if (isNotMature) url.searchParams.append("isNotMature", "true"); // Only add if true
-
-    const response = await fetch(url.toString());
+    const response = await fetch(apiUrl);
 
     if (!response.ok) {
       const errorData = await response.json();
-      throw new Error(errorData?.error || "Error fetching books");
+      throw new Error(errorData?.error || "Error with the API response");
     }
 
     return await response.json();
   } catch (error) {
     console.error("GetBooks API Error:", error);
-    return {
-      books: [],
-      totalPages: 0,
-      error: (error as Error).message || "An unknown error occurred",
-    };
+    return { error: (error as Error).message || "An unknown error occurred" };
   }
 };
