@@ -79,7 +79,11 @@ const SearchFilter = ({
         InputProps={{
           endAdornment: searchValue && (
             <InputAdornment position="end">
-              <IconButton onClick={handleClear} size="small">
+              <IconButton
+                onClick={handleClear}
+                size="small"
+                disabled={isLoading}
+              >
                 <ClearIcon />
               </IconButton>
             </InputAdornment>
